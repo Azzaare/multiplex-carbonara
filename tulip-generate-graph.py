@@ -16,7 +16,7 @@
 from tulip import *
 import os
 import citation_graph
- 
+import datetime
 # the updateVisualization(centerViews = True) function can be called
 # during script execution to update the opened views
 
@@ -79,9 +79,11 @@ def main(graph):
 		for j in pub_data[i][0]:
 			graph.addEdge(id2node[j], id2node[i])
 	
+	#Create ordinal dates of graph
+	ordDate = graph.getIntegerProperty("ordDate")
+	for n in graph.getNodes():
+		l = node_date[n]
+		d = datetime.date(l[2],l[1],l[0])
+		ordDate[n] = d.toordinal()
 
-	#rentrer a la main les dates de : id9301001 et id9401148 OK
-	#cas du & id2149 V
-	#cas des espaces id3028 V
-	#cas des caracteres speciaux
-	#universite sans parenthese id9501008 V
+	#TODO : take care of special characters

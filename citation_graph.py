@@ -118,7 +118,7 @@ def load_data():
 
         #First we will load the file with the citation data to add the citations to the data structure
 
-        f = open('/home/vivek/prog/Cit-HepTh.txt','r') 
+        f = open('/home/vivek/prog/multiplex-carbonara/Cit-HepTh.txt','r') 
         for i in range(4): #first four lines are useless
                 line = f.readline() 
         
@@ -136,7 +136,7 @@ def load_data():
 
         #Secondly we will load the files with the metadata to add the dates and authors of the publications to the data structure
 
-        for root,dirs,fns in os.walk("/home/vivek/prog/cit-HepTh-abstracts/") :
+        for root,dirs,fns in os.walk("/home/vivek/prog/multiplex-carbonara/cit-HepTh-abstracts/") :
                 for fn in fns :
                         if fn.endswith(".abs") :	
                                 f = open(os.path.join(root, fn),'r')
@@ -186,7 +186,7 @@ def push_neo_graph(pub_data):
         record = graph.cypher.execute("MATCH ()-[r:CITED_BY]->() RETURN count(r) AS count")
         l = record[0].count
         
-        if l==352807 : 
+        if l>=352807 : 
                 print "Graph is already loaded"
                 return
         
@@ -254,8 +254,36 @@ def push_neo_graph(pub_data):
         print "Done"
 
 
+#A function to only update the edges for the nodes included in the list
+def selected_push_neo_graph(pub_data, l): #list of ids to update
+        authenticate("localhost:7474","neo4j","azerty01")
+        graph= Graph("http://localhost:7474/db/data")
+        print "Creating selected citations and authors connections, starting at : "
+        tx = graph.cypher.begin()
+
+        for i in l:
+                print i
+                tx.append("MATCH ()-[r:CITED_BY]->(p1:Publication {id:{id}}) DELETE r",{"id":i})
+                tx.commit()
+                tx = graph.cypher.begin()
+                tx.append("MATCH ()-[r:WROTE]->(p1:Publication {id:{id}}) DELETE r",{"id":i})
+                tx.commit()
+                tx = graph.cypher.begin()
+
+                for j in pub_data[i][0]:
+                        tx.append("MATCH (p1:Publication {id:{id1}}),(p2:Publication {id:{id2}})  CREATE (p2)-[:CITED_BY]->(p1)",{"id1":i,"id2":j})   
+                        tx.commit()
+                        tx = graph.cypher.begin()
+                for j in pub_data[i][2]:
+                        tx.append("MATCH (a:Author {name:{j}}),(p:Publication {id:{i}}) CREATE (a)-[:WROTE]->(p)",{"i":i,"j":j})
+                tx.commit()
+                tx = graph.cypher.begin()
+                
+        print "Done"
+
+
 #Function to load the graph from the neo4j database
-def pull_neo_graph(): 
+"""def pull_neo_graph(): 
         pub_data = {} #the data structure to hold the graph
         
         authenticate("localhost:7474", "neo4j", "azerty01") #put your login and password here
@@ -264,7 +292,7 @@ def pull_neo_graph():
         k=1
         for id in graph.cypher.execute("MATCH (n:Publication) RETURN n.id AS id"):
                 print k
-                if k == 104 :#pour tester
+                if k == 104 :#for testing purposes
                         break
                 pub_data[id.id]=[[],[],[]]
                 for cits in graph.cypher.execute("MATCH (n:Publication {id:{id}}),(c:Publication) WHERE  (c)-[:CITED_BY]->(n) RETURN c.id AS id", {"id":id.id}):
@@ -275,7 +303,7 @@ def pull_neo_graph():
                 for auts in graph.cypher.execute("MATCH (n:Publication {id:{id}}),(a:Author) WHERE (a)-[:WROTE]->(n) RETURN a.name AS name",{"id":id.id}):
                         pub_data[id.id][2].append(auts.name)
                 k=k+1
-        return pub_data
+        return pub_data"""
 
 #Function to delete neo4j graph
 def del_neo_graph():
@@ -283,5 +311,25 @@ def del_neo_graph():
         graph = Graph("http://localhost:7474/db/data/")
         graph.delete_all()
         
-#TODO : modifier les fonctions push et pull pour pouvoir effectuer ces operations en plusieurs fois, cad determiner le nombre de relations deja entrees dans la bdd pour commencer a l'indice d'apres
+#Verify that the graph has the correct number of edges, to ensure it has been loaded into neo4j properly
+def verif_graph(pub_data):
+        authenticate("localhost:7474","neo4j","azerty01")
+        graph= Graph("http://localhost:7474/db/data")
+        tx = graph.cypher.begin()
+        l=0
+        ll = []
+        for i in pub_data:
+                tx = graph.cypher.begin()
+                record1 = graph.cypher.execute("MATCH ()-[r:CITED_BY]->(P:Publication {id:{i}}) RETURN count(r)={l} AS name",{"i":i,"l":len(pub_data[i][0])})
+                record2 = graph.cypher.execute("MATCH ()-[r:WROTE]->(P:Publication {id:{i}}) RETURN count(r)={l} AS name",{"i":i,"l":len(pub_data[i][2])})
+                
+                if record1[0].name != True or record2[0].name != True: 
+                        print i
+                        ll+=[i]
+                l=l+1
+                if l%100 == 0: #just to keep track of the advancement
+                        print l
+        return ll
+
+
 
