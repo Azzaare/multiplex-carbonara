@@ -90,7 +90,22 @@ def parse_date(line):
 	return [j,m,a]
 
 
+def adjust_initials(aut):
+        l = aut.split(".")
+        ll = []
+        lll = []
+        for i in l:
+                ll+= [i.lstrip().rstrip()]
+        ll = ". ".join(ll)
 
+        ll   = ll.split(" ")
+        for i in ll:
+                if len(i)==1: #if it's an initial
+                        lll += [i+"."]
+                else:
+                        lll += [i]
+        lll = " ".join(lll)
+        return lll
 
 def parse_author(line): # Can be better 
 	l = line.strip() #remove special chars
@@ -107,11 +122,93 @@ def parse_author(line): # Can be better
 	lp = []
 	for i in l:
 		lp += i.split(',')
-	lp = [x.lstrip().rstrip() for x in lp if x.lstrip().rstrip() != ""] #remove the spaces at the beginning and end of authors name
-	return lp
+	lp = [adjust_initials(x.lstrip().rstrip()).lower() for x in lp if x.lstrip().rstrip() != ""] #remove the spaces at the beginning and end of authors name, and add spaces between initials
+        
+        return lp
+
     
 #Function for loading the data structure which associates for each publication the other publications which it cites, its publication date and its list of authors
 
+#function to return list of unique authors
+def author_list(pub_data):
+        autlist = []
+        for i in pub_data:
+		autlist+=pub_data[i][2]
+        autlist = list(set(autlist))
+        return autlist
+
+#function to return count of authors
+def count_authors(pub_data):
+        return len(author_list(pub_data))
+
+#function which adjusts the initials to the correct format
+def author_initials(name):
+        tnames = name.lower().split(" ")
+        tname = ""
+        for s in tnames[:len(tnames)-1]:
+                if s[len(s)-1]!='.':
+                        tname += s[0]+'.'
+                else:
+                        tname+=s
+        return tname+tnames[len(tnames)-1]
+
+#function which checks if there are conflicts between different authors sharing the same initials
+def check_author_initials_conflict(pub_data):
+        autlist = author_list(pub_data)
+        initial_table = {}
+        for a in autlist:
+                initial_table[author_initials(a)] = []
+        for a in autlist:
+                #if "".join(a.lower().split()) != author_initials(a):
+                initial_table[author_initials(a)] += [a]
+
+        #corrections
+        #remove singletons
+        to_delete = []
+        for i in initial_table:
+                if len(initial_table[i]) <= 1:
+                        to_delete+=[i]
+        for i in to_delete:
+                del initial_table[i]
+            
+        k=0
+        for i in initial_table:
+                 print i,initial_table[i]
+                 if len(initial_table[i])>2:
+                         k+=1
+
+        print k
+
+#function to reduce the number of authors by fusioning authors according to whether one authors is just the initials of another author
+def reduce_authors(pub_data): #PROBLEMATIC if the authors have the same initials especially if one of the authors only appears with his initials and the other authors has both initials and full name
+        #First get lists of all authors, then classify authors by initials. If two (and only two) authors share the same initials, and if one of them is equal to the initials, then mark the change to use the other author name
+
+        #######BUGGGGGGG with jr.
+
+        
+        autlist = author_list(pub_data)
+        initial_table = {}
+        change_table = {}
+        for a in autlist: #build initials tables
+                initial_table[author_initials(a)] = []
+        for a in autlist:
+                initial_table[author_initials(a)] += [a]
+
+        #if one author corresponds to one initial, nothing to do. If two authors correspond to one initial check if we can reduce. If 3 or more authors correspond to the same initial too complicated to do anything
+        for i in initial_table:
+                if len(initial_table[i]) == 2:
+                        if "".join(initial_table[i][0].lower().split()) == author_initials(initial_table[i][0]):
+                                change_table[initial_table[i][0]] = initial_table[i][1]
+                        elif "".join(initial_table[i][1].lower().split()) == author_initials(initial_table[i][1]):
+                                change_table[initial_table[i][1]] = initial_table[i][0]
+        #now we reduce
+        for id in pub_data:
+                for i in range(len(pub_data[id][2])):
+                        if pub_data[id][2][i] in change_table:
+                                pub_data[id][2][i] = change_table[pub_data[id][2][i]]
+        
+
+#Function which loads the data into the data structure
 def load_data():
         pub_data = {} #Data structure for our program. Associates to an id (int) a list of 3 lists : the list of citations, the date and the list of authors 
         print "Loading data..."
@@ -158,178 +255,14 @@ def load_data():
                                                                 laut+=line
                                                                 line = f.readline()
                                                         lauthors = parse_author(laut)
+                                                       
                                                 line = f.readline()
                                 
                                                 pub_data[id][1] = ldate #add the metadata to the data structure
-                                                pub_data[id][2] = lauthors 
+                                                pub_data[id][2] = lauthors
+        reduce_authors(pub_data) #reduce the number of authors (check if some different authors are the same author but with name written differently 
         print "Data loaded"
         return pub_data
-
-
-#Function which creates a graph in neo4j from the data in pub_data
-""" 
-Structure of the graph
-Nodes : authors, publications, dates
-Relations : CITED_BY (between two pubs) WROTE (between pubs and authors) PUB_DAY/MONTH/YEAR (between pubs and days/months/years)
-"""
-
-def push_neo_graph(pub_data):
-        #connect to the server
-        authenticate("localhost:7474", "neo4j", "azerty01") #put your login and password here
-        graph = Graph("http://localhost:7474/db/data/")
-        
-        print "Checking current graph status"
-        #checker si les dates/nodes/auteurs ont ete crees
-        #checker ou on en est avec les relations
-        
-        
-        record = graph.cypher.execute("MATCH ()-[r:CITED_BY]->() RETURN count(r) AS count")
-        l = record[0].count
-        
-        if l>=352807 : 
-                print "Graph is already loaded"
-                return
-        
-        if l == 0 : #if there is no graph, we initialize the other nodes
-                #starting to create graph
-                del_neo_graph() #delete whatever already exists
-                print "Starting graph creation"
-                tx = graph.cypher.begin() #tx will be our cypher query object throughout this function
-
-                #add nodes for the dates
-                print "Creating date nodes..."
-                for i in range(1,32):
-                        tx.append("CREATE (n:Day {name:{i}})",{"i": i})
-                for i in range(1,13):
-                        tx.append("CREATE (n:Month {name:{i}})",{"i": i})
-                for i in range(13):
-                        tx.append("CREATE (n:Year {name:{i}})",{"i": 1991+i})
-                tx.commit()
-                print "Done"
-
-                #add all the publication nodes and connect them to the date nodes
-                print "Creating publication nodes..."
-                tx = graph.cypher.begin()
-                for i in pub_data:
-                        tx.append("MATCH (d:Day), (m:Month), (y:Year) "
-                                  "WHERE d.name={d} AND m.name = {m} AND y.name = {y} "
-                                  "CREATE (n:Publication {id:{i}}), (n)-[:PUB_DAY]->(d), (n)-[:PUB_MONTH]->(m), (n)-[:PUB_YEAR]->(y)"
-                                  , {"i": i, "d": pub_data[i][1][0], "m": pub_data[i][1][1], "y": pub_data[i][1][2]})
-                tx.commit()
-                print "Done"
-        
-                #add all the author nodes
-                print "Creating author nodes..."
-                #determine the unique list of authors (no duplicates)
-                autlist=[]
-                for i in pub_data:
-                        autlist+=pub_data[i][2]
-                autlist = list(set(autlist))
-        
-                tx = graph.cypher.begin()
-                for i in autlist:
-                        tx.append("CREATE (a:Author {name:{i}})",{"i":i})
-                tx.commit()
-                print "Done"
-
-        #create citations and authors connections
-        print "Creating citations and authors connections, starting at : "
-        tx = graph.cypher.begin()
-        #determine where to start
-        l = citation_no(pub_data,l)
-        k=0
-        for i in pub_data:
-                if k<l:
-                        k=k+1
-                        continue
-                print k
-                for j in pub_data[i][0]:
-                        tx.append("MATCH (p1:Publication {id:{id1}}),(p2:Publication {id:{id2}})  CREATE (p2)-[:CITED_BY]->(p1)",{"id1":i,"id2":j})            
-                for j in pub_data[i][2]:
-                        tx.append("MATCH (a:Author {name:{j}}),(p:Publication {id:{i}}) CREATE (a)-[:WROTE]->(p)",{"i":i,"j":j})
-                k=k+1
-                tx.commit()
-                tx = graph.cypher.begin()
-                
-        print "Done"
-
-
-#A function to only update the edges for the nodes included in the list
-def selected_push_neo_graph(pub_data, l): #list of ids to update
-        authenticate("localhost:7474","neo4j","azerty01")
-        graph= Graph("http://localhost:7474/db/data")
-        print "Creating selected citations and authors connections, starting at : "
-        tx = graph.cypher.begin()
-
-        for i in l:
-                print i
-                tx.append("MATCH ()-[r:CITED_BY]->(p1:Publication {id:{id}}) DELETE r",{"id":i})
-                tx.commit()
-                tx = graph.cypher.begin()
-                tx.append("MATCH ()-[r:WROTE]->(p1:Publication {id:{id}}) DELETE r",{"id":i})
-                tx.commit()
-                tx = graph.cypher.begin()
-
-                for j in pub_data[i][0]:
-                        tx.append("MATCH (p1:Publication {id:{id1}}),(p2:Publication {id:{id2}})  CREATE (p2)-[:CITED_BY]->(p1)",{"id1":i,"id2":j})   
-                        tx.commit()
-                        tx = graph.cypher.begin()
-                for j in pub_data[i][2]:
-                        tx.append("MATCH (a:Author {name:{j}}),(p:Publication {id:{i}}) CREATE (a)-[:WROTE]->(p)",{"i":i,"j":j})
-                tx.commit()
-                tx = graph.cypher.begin()
-                
-        print "Done"
-
-
-#Function to load the graph from the neo4j database
-"""def pull_neo_graph(): 
-        pub_data = {} #the data structure to hold the graph
-        
-        authenticate("localhost:7474", "neo4j", "azerty01") #put your login and password here
-        graph = Graph("http://localhost:7474/db/data/")
-        
-        k=1
-        for id in graph.cypher.execute("MATCH (n:Publication) RETURN n.id AS id"):
-                print k
-                if k == 104 :#for testing purposes
-                        break
-                pub_data[id.id]=[[],[],[]]
-                for cits in graph.cypher.execute("MATCH (n:Publication {id:{id}}),(c:Publication) WHERE  (c)-[:CITED_BY]->(n) RETURN c.id AS id", {"id":id.id}):
-                        pub_data[id.id][0].append(cits.id)
-                for date in graph.cypher.execute("MATCH (n:Publication {id:{id}}),(d:Day),(m:Month),(y:Year) WHERE (n)-[:PUB_DAY]->(d) AND (n)-[:PUB_MONTH]->(m) AND (n)-[:PUB_YEAR]->(y) "
-                                                 "RETURN d.name AS dn, m.name AS mn, y.name AS yn",{"id":id.id}):
-                        pub_data[id.id][1] = [date.dn,date.mn,date.yn]
-                for auts in graph.cypher.execute("MATCH (n:Publication {id:{id}}),(a:Author) WHERE (a)-[:WROTE]->(n) RETURN a.name AS name",{"id":id.id}):
-                        pub_data[id.id][2].append(auts.name)
-                k=k+1
-        return pub_data"""
-
-#Function to delete neo4j graph
-def del_neo_graph():
-        authenticate("localhost:7474", "neo4j", "azerty01") #put your login and password here
-        graph = Graph("http://localhost:7474/db/data/")
-        graph.delete_all()
-        
-#Verify that the graph has the correct number of edges, to ensure it has been loaded into neo4j properly
-def verif_graph(pub_data):
-        authenticate("localhost:7474","neo4j","azerty01")
-        graph= Graph("http://localhost:7474/db/data")
-        tx = graph.cypher.begin()
-        l=0
-        ll = []
-        for i in pub_data:
-                tx = graph.cypher.begin()
-                record1 = graph.cypher.execute("MATCH ()-[r:CITED_BY]->(P:Publication {id:{i}}) RETURN count(r)={l} AS name",{"i":i,"l":len(pub_data[i][0])})
-                record2 = graph.cypher.execute("MATCH ()-[r:WROTE]->(P:Publication {id:{i}}) RETURN count(r)={l} AS name",{"i":i,"l":len(pub_data[i][2])})
-                
-                if record1[0].name != True or record2[0].name != True: 
-                        print i
-                        ll+=[i]
-                l=l+1
-                if l%100 == 0: #just to keep track of the advancement
-                        print l
-        return ll
 
 
 
