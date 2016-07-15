@@ -562,7 +562,6 @@ def PubCoeffsToAuthorCoeffs(g, gaut, names, ReductionFunc = PTASumPA):
         ReductionFunc(g,coeff,autcoeff)
 
         authorcoeff = gaut.graph.getDoubleProperty(name+ReductionFunc.__name__)
-
         for n in autcoeff:
             authorcoeff[n] = autcoeff[n]
         

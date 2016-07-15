@@ -45,7 +45,23 @@ def CoeffToRank(g, names):
         for i in range(len(l)):
             coeff[l[i]] = len(l)-i
 
+#Calculates the difference in ranks between two measures and transforms it into a coeff
+#how to judge order? Do all the orders possible
+def CompareRank(g, names):
+    CoeffToRank(g,names) #first convert to Rank
+    
 
+    #then compare
+    for i in range(len(names)):
+        for j in range(i):
+            coeffij = g.graph.getDoubleProperty("RankDiff"+names[i]+"-"+names[j])
+            coeffji = g.graph.getDoubleProperty("RankDiff"+names[j]+"-"+names[i])
+            coeffi = g.graph["Rank"+names[i]]
+            coeffj = g.graph["Rank"+names[j]]
+            for n in g.graph.getNodes():
+                coeffij[n] = coeffi[n]-coeffj[n]
+                coeffji[n] = coeffj[n] - coeffi[n]
+                
 
 ################COEFFICIENT CALCULATIONS
 def KendallTauDistance(l1, l2):
@@ -336,8 +352,61 @@ def MeasureTime_static(g, measure, filename = ""):
     return H
 
 
+#TO TEST 
+def MeasureTime_dynamic(g, measure_addnode, filename = ""):
+    H = {}
+    i=0
+    for gk in g.subGraphs:
+        print i
+        graph = g[gk]
+
+        gr = graph.addSubGraph(EmptyGraph)
+        construction_order,edges = GetConstructionOrder(graph)
+
+        totaltime = 0.0
+        
+        k=0
+        for n in construction_order: #for all remaining nodes
+            #add the node and its out edges
+            gr.graph.addNode(n)
+            for t in edges[n]:
+                e = graph.graph.existEdge(n,t) #have to do this otherwise it creates duplicate edges...
+                gr.graph.addEdge(e) 
+            k+=1
+            #update the flow of the graph while measuring the time it takes
+            ts = time.time()
+            measure_addnode(gr, n)
+            te = time.time()
+
+            totaltime+=(te-ts)
+            
+            if k%100 == 0:
+                print k
+        
+        #now the graph's coeffs should be uptodate. Delete the subgraph, we don't need it anymore
+        graph.delSubGraph(gr)
+        H[gk] = totaltime
+        i+=1
+        
+    if filename != "": #if we decide to save it to an excel file
+        wb = ox.Workbook()
+        ws = wb.active
+        ws.title = filename
+
+        i = 1
+        for gk in g.subGraphs:
+            ws.cell(row = i, column = 1).value = g[gk].nNodes()
+            ws.cell(row = i, column = 2).value = H[gk]
+            i+=1
+
+        wb.save(filename+".xlsx")
+
+    return H
+    
+
+
 #function which measures the time it takes to add one node and update the whole measure. Measure must be of type *_AddNode
-def MeasureTime_dynamic(g, measure_static, measure_addnode, filename = ""): 
+def MeasureTime_addnode(g, measure_static, measure_addnode, filename = ""): 
     H = {}
     i=0
 
@@ -348,9 +417,7 @@ def MeasureTime_dynamic(g, measure_static, measure_addnode, filename = ""):
         graph = g[gk]
         measure_static(graph)
         node_to_add = node_order[graph.nNodes()]
-        if graph.graph.isElement(node_to_add):
-            print "BLABLABLA"
-            return
+        
         #add the new node and its edges
         graph.graph.addNode(node_to_add)
         for t in edges[node_to_add]:
@@ -386,44 +453,3 @@ def MeasureTime_dynamic(g, measure_static, measure_addnode, filename = ""):
 
 
         
-        
-    
-#####Compare the best progressions between two different measures
-
-###TODO        
-def BestProgression(l1,l2):
-    H1 = {}
-    H2 = {}
-    i = 1
-    for l in l1:
-        H1[l] = i
-        i+=1
-
-    i = 1
-    for l in l2:
-        H2[l] = i
-        i+=1
-
-    keylist = list(set(l1) & set(l2))
-
-    H = {}
-    for l in keylist:
-        H[l] = H2[l] - H1[l]
-
-    l = sorted(H, key=H.__getitem__, reverse=True)
-
-
-    
-    return l
-
-def BestPubProgressionRank(g, metric1, metric2):
-    l1 = RankPubsByCoeff(g, metric1)
-    l2 = RankPubsByCoeff(g, metric2)
-    return BestProgression(l1,l2)
-
-def BestAuthorProgressionRank(g, metric1, metric2):
-    l1 = ReductionPubToAuthor(g, metric1, PubToAuthorPonderedSum)
-    l2 = ReductionPubToAuthor(g, metric2, PubToAuthorPonderedSum)
-    return BestProgression(l1,l2)
-
-

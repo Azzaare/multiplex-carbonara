@@ -51,16 +51,11 @@ Fusion noeuds seulement si memes auteurs, et dans ce cas faire une vraie fusion.
 
 """
 
-Bugs 
--multiplex selectif avait nu bug, modifier le multiplex selectif unbuonded
 
 Todo:
 
 Medium priority :
--faire les fonctions de mesure de temps
--sortir toutes les mesures de temps
 -faire version dynamique des mesures multiplex
--faire version dynamique de toutes les mesures en fait
 
 Low priority:
 -determiner a partir de combien de noeuds a ajouter dynamiquement cela devient il plus rentable de les ajouter statiquement
@@ -72,8 +67,8 @@ Todo:
 -essayer de fitter des courbes theoriques pour ces tableaux de mesure du temps
 -sortir toutes les correlations pour tous les types de coeff ranks, pub ou aut, possibles
 -reecrire rapport un peu mieux
--changer l'introduction pour vraiment montrer le fait qu'on va pas revolutioner les classements et dire que le but c'est vraiment de voir quelles publications ressortent plus avec nos mesures, pas dire que ed witten est le meilleur
--determiner les plus grands "sauts" entre deux mesures
+-changer l'introduction pour vraiment montrer le fait qu'on va pas revolutioner les classements et dire que le but c'est vraiment de voir quelles publications ressortent plus avec nos mesures
+-determiner les plus grands "sauts" entre deux mesures V Essayer de plutot regarder les sauts en coefficients plutot que les sauts en classement
 
 Todo sur le long terme:
 -interpreter les coefficients
@@ -88,8 +83,67 @@ Observations : le probleme de FlowSelectionNewNew c'est qu'en fait les sous grap
 
 Donc ca peut pas marcher. Au pire on s'en fout. Mais si en fait ca devrait marcher si on met 0 cmome coeff dans les ss grapehs qui servent a rien. Bon, TODO eventuellement
 
+Observations : le caractere unbounded on s'en fout pour le calcul du temps, par contre le cote k est interessant
+
+Observation : peut etre que dans les progressions comparer le rank n'est pas la meilleure idee due a la facilite dont on augmente dans les ranks avec un tout petit increase de coeff
+
+Observation : les fonctinos de mesures dynamiques ne servent pas a grand chose, sauf peut etre a effectuer des tests...
+
+
+Les mesures de temps a calculer :
+Pour commencer:
+-degre (pour le lol)
+-flot, kflot avec k variant en statique et en dynamique
+-addnode, kaddnode avec k variant
+Ensuite:
+-les flots multiplexes en statique
+-les flots multiplexes addnode TODO
+-les flots multiplexes en dynamique TODO
+
+Enfin:
+-fitter des courbes polynomiales
+-expliquer un peu les resultats obtenus
+-comparer les valeurs THEORIQUES avec les valeurs experimentales
+
+Pour terminer : 
+-construire "le pire DAG possible" et tester les mesures la dessus
+
+TODO : modifier la version dynamique (voire statique) de degree et kdegree pour que ca ne comptabilise pas le node (faire -1)
+
+Observation : en fait nous on fait varier nos mesures flot selon 2 dimensions : la divisibilite de l'information, et la distance de propagation de l'information
+
 """
 
+def testranks():
+    reloading()
+    g = root[1][2][3]
+    #g = root.addSubGraph(PubGraph)
+    #g = g.addSubGraph(InducedConnexMaxGraph)
+    #g = g.addSubGraph(MultiplexGraph)
+
+    """me.MonoplexFlow_static(g)
+    me.MultiplexFlowAggregated_static(g)
+    me.MultiplexFlowSum_static(g)
+    me.MultiplexFlowSelectiveNew_static(g)"""
+
+    
+    gaut = root[1][2].addSubGraph(AuthorGraph)
+    names = ["FlowCoeff","MultiplexFlowAggregatedCoeff","MultiplexFlowSumCoeff","MultiplexFlowSelectiveCoeff"]
+
+    gf.PubCoeffsToAuthorCoeffs(g,gaut,names)
+    names = [n+"PTASumPA" for n in names]
+    
+    rk.CompareRank(gaut, names)
+
+    totalnames = []
+    for i in range(len(names)):
+        for j in range(i):
+            totalnames+=["RankDiff"+names[i]+"-"+names[j]]
+            totalnames+=["RankDiff"+names[j]+"-"+names[i]]
+    
+    rk.PrintTop20(gaut, totalnames)
+    
+    
 def testselective():
     reloading()
 
@@ -111,11 +165,15 @@ def testtruc():
     reloading()
     g = root.addSubGraph(PubGraph)
     g = g.addSubGraph(InducedConnexMaxGraph)
-    gf.SamplePartiallyConstructedMultiplexSubGraphs(g,100,27000,1000)
+    gf.SamplePartiallyConstructedMultiplexSubGraphs(g,100,2000,100)
+    #g = root[1][2]
     #g = root[27384][27385]
     #rk.MeasureTime_static(g, me.Degree_static,"degree")
     rk.MeasureTime_static(g, me.MonoplexFlow_static,"flow")
-    rk.MeasureTime_dynamic(g, me.MonoplexFlow_static, me.MonoplexFlow_addNode, "flowaddnode2")
+    #rk.MeasureTime_dynamic(g, me.MonoplexFlow_static, me.MonoplexFlow_addNode, "flowaddnode2")
+    KMonoplexFlow_addNode = lambda g, node, depth = 2, coeffname="FlowCoeff" : me.MonoplexFlow_addNode(g,node,depth,coeffname)
+    
+    rk.MeasureTime_dynamic(g, KMonoplexFlow_addNode, "flowaddnode2dynamic")
     #rk.MeasureTime_static(g, me.MultiplexFlowSum_static,"mxflowsum")
     #rk.MeasureTime_static(g, me.MultiplexFlowAggregated_static,"mxflowaggregated")
     #rk.MeasureTime_static(g, MonoplexFlow_static,"mxflowselective")
