@@ -191,7 +191,10 @@ def SelectDagDistance(g, node, depth = float('inf'), direction = "direct"):
                 
     
     return node_list
-                
+
+
+
+
 
 ##############Dynamic construction related functinos
 
@@ -432,14 +435,9 @@ def InfectClusters(g, node, direction = "direct"): #we only do depth==2
 ##########Add author nodes to a pubgraph
 def AddAuthorNodes(g):
     #Get author nodes
-    autlist = []
+    autlist = GetAuthors(g)
     authors = g.graph["authors"]
-    for n in g.graph.getNodes():
-        for aut in authors[n]:
-            autlist+= [root.id2aut[aut]]
-    #remove duplicates
-    autlist = list(set(autlist))
-    
+
     #Add author nodes
     for aut in autlist:
         g.graph.addNode(aut)
@@ -448,45 +446,123 @@ def AddAuthorNodes(g):
     for n in g.graph.getNodes():
         for aut in authors[n]:
             g.graph.addEdge(n,root.id2aut[aut])
-    
 
-##########EXPERIMENTS WITH EIGENVECTOR CENTRALITY CALCULATIONS
-#Worthless
-
-#Function to convert the graph into a numpy matrix
-def ConvertToMatrix(g):#, direction = "direct"):
-    H = {}
-    k = 0
+###Get the list of nodes of the authors of the pubs in a graph
+def GetAuthors(g):
+    autlist = []
+    authors = g.graph["authors"]
     for n in g.graph.getNodes():
-        H[n] = k
-        k+=1
-        
-    a = np.zeros((g.nNodes(),g.nNodes()))
-    for n in g.graph.getNodes():
-        for m in g.graph.getInNodes(n):
-              a[H[n]][H[m]] = 1
+        autlist+=[root.id2aut[a] for a in authors[n]]
+    autlist = list(set(autlist))
 
-        for m in g.graph.getOutNodes(n):
-            a[H[n]][H[m]] = -1
-
-    return a
+    return autlist
             
-#Function which determines the eigenvector coeff for each node in a graph. Returns the eigenvalue
-def EigenValueMeasure(g, coeff = "EigenCoeff"):
-    M = ConvertToMatrix(g)
 
-    (a,b) = np.linalg.eig(M)
-    print a
-    print b
 
-def PowerIteration(g, niter = 10002):
-    x = np.array([0.,0.,1.]) #starting vector
-    M = ConvertToMatrix(g)
-    print M
-    for n in range(niter):
-        tx = x
-        x = M.dot(x)
-        x += 0.5*tx
-        x = x/np.linalg.norm(x)
-    print x
+#####Function to create a sample of subgraphs
+def SampleRandomSubGraphs(g, minnodes, maxnodes, step):
+    numnodes = minnodes
+
+    while numnodes < maxnodes:
+        g.addSubGraph(InducedConnexRandomGraph, numnodes = numnodes)
+        numnodes+=step
+        print numnodes
     
+def SamplePartiallyConstructedSubGraphs(g, minnodes, maxnodes, step):
+    numnodes = minnodes
+    order = GetConstructionOrder(g)
+    
+    while numnodes < maxnodes:
+        g.addSubGraph(PartiallyConstructedGraph, numnodes = numnodes, order = order)
+        numnodes+=step
+        print numnodes
+
+def SamplePartiallyConstructedMultiplexSubGraphs(g, minnodes, maxnodes, step): 
+    numnodes = minnodes
+    order = GetConstructionOrder(g)
+    
+    while numnodes < maxnodes:
+        gr = g.addSubGraph(PartiallyConstructedGraph, numnodes = numnodes, order = order)
+        grr = gr.addSubGraph(MultiplexGraph)
+        gr.ReplaceWithSubGraph(grr) 
+        numnodes+=step
+        print numnodes
+            
+
+#####Transfer coeffs of the same nodes from one graph to another
+def TransferCoeff(gsource,gdest,coeffname, coeffdestname = ""):
+    coeff = gsource.graph[coeffname]
+    coeffdest = gdest.graph.getDoubleProperty(coeffname if coeffdestname == "" else coeffdestname)
+    
+    for n in gsource.graph.getNodes():
+        if gdest.graph.isElement(n):
+            coeffdest[n] = coeff[n]
+            
+    
+
+#####Functions to reduce coeffs from pubs to auts
+#Reduction functions from publications to authors
+
+#Pub To Author Sum
+def PTASum(g, coeff, autcoeff):
+    for n in g.graph.getNodes():
+        laut = g.graph["authors"][n]
+        for aut in laut:
+            autcoeff[root.id2aut[aut]] += coeff[n]
+
+#Pub to Author Sum Pondered by the number of Authors            
+def PTASumPA(g, coeff, autcoeff):
+    for n in g.graph.getNodes():
+        laut = g.graph["authors"][n]
+        for aut in laut:
+            autcoeff[root.id2aut[aut]] += coeff[n]/len(laut)
+
+#Pub to Author Average            
+def PTAAverage(g, coeff, autcoeff):
+    npubs = {aut : 0 for aut in autcoeff} #the number of publications of each author
+    for n in g.graph.getNodes():
+        laut = g.graph["authors"][n]
+        for aut in laut:
+            autcoeff[root.id2aut[aut]] += coeff[n]
+            npubs[root.id2aut[aut]] +=1
+
+    for aut in autcoeff:
+        autcoeff[aut] = autcoeff[aut]/npubs[aut]
+
+#Pub to Author Average Pondered by the number of Author
+def PTAAveragePA(g, coeff, autcoeff):
+    npubs = {aut : 0 for aut in autcoeff} #the number of publications of each author
+    for n in g.graph.getNodes():
+        laut = g.graph["authors"][n]
+        for aut in laut:
+            autcoeff[root.id2aut[aut]] += coeff[n]/len(laut)
+            npubs[root.id2aut[aut]] +=1
+        
+    for aut in autcoeff:
+        autcoeff[aut] = autcoeff[aut]/npubs[aut]
+
+
+        
+#####Transform a list of coeffs to coeffs for an authorgraph. By default reduction func is sum pondered by number of authors
+def PubCoeffsToAuthorCoeffs(g, gaut, names, ReductionFunc = PTASumPA):
+    if gaut.__class__.__name__!="AuthorGraph":
+        print "gaut must be an author graph"
+        return
+    
+    for name in names:
+        coeff = g.graph[name]
+        autlist = GetAuthors(g)
+    
+        #table which associates author to coeff
+        autcoeff = {}
+        for aut in autlist: #initialize it
+            autcoeff[aut] = 0.0
+
+        #now cycle through the nodes and distribute coeff
+        ReductionFunc(g,coeff,autcoeff)
+
+        authorcoeff = gaut.graph.getDoubleProperty(name+ReductionFunc.__name__)
+
+        for n in autcoeff:
+            authorcoeff[n] = autcoeff[n]
+        

@@ -83,13 +83,20 @@ class AbstractGraph(object):
         
     def delSubGraphs(self):
         for key in self.subGraphs:
-            if g.__class__.__name__ !="NetworkxGraph": #networkxgraph being a special case where there is no tulip subgraph
+            if self.subGraphs[key].__class__.__name__ !="NetworkxGraph": #networkxgraph being a special case where there is no tulip subgraph
                 self.graph.delAllSubGraphs(self.subGraphs[key].graph)
         self.subGraphs = {}
 
     def renameGraph(self, name):
         self.name = name
         self.graph.setName(name)
+
+
+    #Function which replaces current graph with one of its subgraphs in the graph hierarchy. This will not actually delete the graph, so please use sparingly
+    def ReplaceWithSubGraph(self, sub): 
+        self.parent.subGraphs[sub.getId()] = sub
+        sub.parent = self.parent
+        del self.parent.subGraphs[self.getId()]
 
     
 #Base class for the graphs.    
@@ -151,7 +158,7 @@ class BaseGraph(AbstractGraph):
 	node_authors = self.graph.getStringVectorProperty("authors")	
 	
 	for i in BaseGraph.pub_data:
-            node_authors[BaseGraph.id2pub[str(i)]] = BaseGraph.pub_data[i][2]
+            node_authors[BaseGraph.id2pub[str(i)]] = list(set(BaseGraph.pub_data[i][2]))
             l = BaseGraph.pub_data[i][1]
             d = datetime.date(l[2],l[1],l[0])
             node_date[BaseGraph.id2pub[str(i)]] = d.toordinal()
@@ -278,7 +285,7 @@ class AuthorGraph(AbstractGraph):
     def _default_name(self):
         return "Author Graph"
 
-    def build_graph(self):
+    def build_graph(self, metricname = None, TransferFunc = None, coeffname = None):
         if self.parent == None:
             raise Exception("No parent graph specified")
 
@@ -288,13 +295,8 @@ class AuthorGraph(AbstractGraph):
 	shared_pubs = self.graph.getStringVectorProperty("shared_pubs")
         
         #Get author nodes
-        autlist = []
+        autlist = GetAuthors(self.parent)
         authors = self.parent.graph["authors"]
-        for n in self.parent.graph.getNodes():
-            for aut in authors[n]:
-                autlist+= [root.id2aut[aut]]
-        #remove duplicates
-        autlist = list(set(autlist))
                     
         #Add author nodes
 	for aut in autlist:
@@ -317,6 +319,10 @@ class AuthorGraph(AbstractGraph):
                             shared_pubs[e] += [id]
                             shared_pubs[er] += [id]
 
+        #now transfer the values, if need be
+        if metricname!=None and TransferFunc!=None and coeffname!=None:
+            pass #TODO
+            
       
 
 ##Attention lorsqu'on utilise induceddag avec direction= "reversed" ne selectionne pas les auteurs
@@ -382,6 +388,7 @@ class MultiplexGraph(AbstractGraph):
             tgraph = self.graph.inducedSubGraph(sons)
             tgraph.setName("mx"+node_id[n])
             gr.append_graph(tgraph)
+            
             for e in gr.graph.getEdges():
                 shared_cited_by[e]+=[n.id]
                 shared_cited_length[e]+=1
@@ -664,3 +671,36 @@ class NetworkxGraph(AbstractGraph):
         coeff = self.parent.graph.getDoubleProperty(coeffname) #by default doubleproperty, perhaps make it a choice by passing an argument?
         for n in H:
             coeff[n] = H[n]
+
+
+
+#Create the partially constructed graph in the correct constructed order, with numnodes nodes
+class PartiallyConstructedGraph(AbstractGraph):
+    def _default_name(self):
+        return "Partially Constructed Graph"
+
+    def build_graph(self, numnodes, order = (0,0)):
+        if self.parent == None:
+            raise Exception("No parent graph specified")
+
+        #now build the subgraph 
+        if self.name == self._default_name(): #update the name if not custom name
+            self.name += " with "+str(numnodes)+" nodes"
+            
+        self.graph = self.parent.graph.addSubGraph(self.name) #create the graph
+
+        if order == (0,0):
+            construction_order,edges = GetConstructionOrder(self.parent)
+        else:
+            construction_order,edges = order
+        for i in range(numnodes): #for all remaining nodes
+            #add the node and its out edges
+            n = construction_order[i]
+            self.graph.addNode(n)
+            for t in edges[n]:
+                e = self.parent.graph.existEdge(n,t) #have to do this otherwise it creates duplicate edges...
+                self.graph.addEdge(e) 
+            
+            
+        self.parent.subGraphs[self.graph.getId()] = self #add its id to the parent graph
+        self.edgeDirection = self.parent.edgeDirection
