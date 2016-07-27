@@ -394,7 +394,8 @@ class MultiplexGraph(AbstractGraph):
                 shared_cited_length[e]+=1
 
             for m in gr.graph.getNodes():
-                shared_cited_length[m]+=1    
+                shared_cited_by[m] += [n.id]
+                shared_cited_length[m]+=1
             k+=1
             print k
 
@@ -693,10 +694,12 @@ class PartiallyConstructedGraph(AbstractGraph):
             construction_order,edges = GetConstructionOrder(self.parent)
         else:
             construction_order,edges = order
+        
         for i in range(numnodes): #for all remaining nodes
             #add the node and its out edges
             n = construction_order[i]
             self.graph.addNode(n)
+            
             for t in edges[n]:
                 e = self.parent.graph.existEdge(n,t) #have to do this otherwise it creates duplicate edges...
                 self.graph.addEdge(e) 
@@ -704,3 +707,4 @@ class PartiallyConstructedGraph(AbstractGraph):
             
         self.parent.subGraphs[self.graph.getId()] = self #add its id to the parent graph
         self.edgeDirection = self.parent.edgeDirection
+        

@@ -9,9 +9,18 @@ import scipy as sc
 #Enfin peut etre une derniere categorie de flots, qui en fait seraient des flots au sein des sous graphes multiplexes, mais qui prendraient en compte le fait que certaine aretes sont dans d'autres sous graphes grace a des ponderations
 #ESTCEQUIL FAUT PONDERER??
 
-#mettre le rapport sur overleaf
+
 #faire des mesures pour les auteurs p.ex. eigenvector networkx rendu undirected
 #mesures basees sur le temps : profondeur temporelle. mesure de popularite : profondeur/tps passe pour arrive a cette profondeur
+
+"""
+TODO:
+-Essayer d'ameliorer algorithmiquement flowselective et flowsum
+-ARRONDIR TOUTES LES VALEURS DE COEFF. NE GARDER QUE X CHIFFRES SIGNIFICATIFS DONNES EN PARAMETRE. DEFAULT = 5
+-ET SI A LA PLACE DE CALCULER LE DAG ON FAISAIT JUSTE LE FLOT NORMAL MAIS EN METTANT 0 A TOUS LES COEFFICIENTS SAUF CELUI QUE LON VIENT DAJOUTER????
+
+
+"""
 
 
 #####Classic measures of citation analysis
@@ -48,7 +57,7 @@ def HIndex_static(g, coeffname = "HIndexCoeff"): #nombre de publications ayant p
 
 
 #A tester    
-def HIndexPub_static(g, coeffname = "HIndexPubCoeff"): #TODO
+def HIndexPub_static(g, coeffname = "HIndexPubCoeff"): 
     coeff = g.graph.getIntegerProperty(coeffname)
     
     #for each pubs we need to check the number of its citations above a certain citation threshold
@@ -81,6 +90,16 @@ def Degree_static(g, coeffname = "DegreeCoeff"):
         print k," : ",coeff[n]
         k+=1
 
+def Degree_addNode(g, node, depth = float('inf'), coeffname = "DegreeCoeff"):
+    #this is the function which recalculates the values of the coeffs according to which node has been added
+    #we assume "node" has just been added
+
+    coeff = g.graph.getDoubleProperty(coeffname)
+    node_list = GetSons(g, node, direction = "direct") #select dag with direct direction
+    #for each node in node_list, increase its coeff by 1
+    for n in node_list:
+        coeff[n] +=1
+    coeff[node] -=1 #we shouldnt add +1 to the node we have just added
 
 #Degree pondered by the num of cited pubs. The same thing as 1-monoplexflow
 def DegreePondered_static(g, coeffname = "DegreePonderedCoeff"):
@@ -160,43 +179,6 @@ def KDegree_addNode(g, node, depth = float('inf'), coeffname = "KDegreeCoeff"):
         coeff[n] +=1
     coeff[node] -=1 #we shouldnt add +1 to the node we have just added
 
-#dynamic version of kdegree. Decomposes the graph with getconstructionorder and calculates the measure dynamically.     
-def KDegree_dynamic(g, depth = float('inf'), coeffname= "KDegreeCoeff"):
-    coeff = g.graph.getDoubleProperty(coeffname)
-    coeff.SetAllNodeValue(0.0)
-    gr = g.addSubGraph(EmptyGraph)
-    construction_order,edges = GetConstructionOrder(g)
-    #this is the function which creates an empty subgraph and slowly adds the elements, while updating the measure each time dynamically
-
-    """#try to check if some part of the graph already exists
-    starting_point = 0
-    for n in construction_order:
-        if g.graph["DagSizeFairCoeff"][n] !=0.0: #if the coeff has already been calculated for the node add it directly to the graph, no need to recalculate
-            gr.graph.addNode(n) 
-            for t in edges[n]:
-                gr.graph.addEdge(n,t)
-        else:
-            print "starting at "+str(starting_point)
-            break
-        starting_point+=1
-        
-    construction_order = construction_order[starting_point:] #get rid of the nodes already added"""
-    
-    k=0
-    for n in construction_order: #for all remaining nodes
-        #add the node and its out edges
-        gr.graph.addNode(n)
-        for t in edges[n]:
-            e = g.graph.existEdge(n,t)
-            gr.graph.addEdge(e) 
-        k+=1
-        #update the flow of the graph
-        KDegree_addNode(gr, n, depth)
-        if k%100 == 0:
-            print k
-        
-    #now the graph's coeffs should be uptodate. Delete the subgraph, we don't need it anymore
-    g.delSubGraph(gr)
 
 
 #Measure which calculates the depth of the induced dag for each node   
@@ -384,13 +366,48 @@ def KMonoplexFlow_static(g, depth=float('inf'), coeffname="KFlowCoeff"): #result
 
 
 
+#####Monoplex flow tempered by a coeff
+def AlphaMonoplexFlow_static(g, alpha, coeffname = "AlphaFlowCoeff"):
+    if coeffname == "AlphaFlowCoeff":
+        coeffname = str(alpha)+"FlowCoeff"
+
+    def get_source_nodes(g):
+	l = []	
+	for n in g.graph.getNodes():
+		if g.graph.indeg(n) == 0 :
+			l+=[n]
+	return l
+    def calculate_flow(g):
+        metric = g.graph[coeffname]
+	if g.nNodes() == 0:	
+		return 
+	source_list = get_source_nodes(g)
+	for n in source_list:
+		for e in g.graph.getOutEdges(n):
+                    m = g.graph.target(e) #get the target of the edge
+                    metric[m] = metric[m]+metric[n]*alpha/g.graph.outdeg(n) #temper by alpha
+                    metric[e] = metric[n]*alpha/g.graph.outdeg(n)
+		g.graph.delNode(n)	
+	return calculate_flow(g)
+
+    if g.edgeDirection != "direct" and g.edgeDirection != "reversed":
+        print "Must be an oriented publication graph"
+        return
+    
+    if tlp.AcyclicTest.isAcyclic(g.graph) == False:
+        print "Graph not acyclic!"
+        return
+    
+    gr = g.addSubGraph(CloneGraph)
+            
+    metric = g.graph.getDoubleProperty(coeffname)
+    metric.setAllNodeValue(1.0)
+    calculate_flow(gr)
+    g.delSubGraph(gr)
+
         
 #Recalculate the monoplex flow after adding a node
-def MonoplexFlow_addNode(g, node, depth = float('inf'), coeffname="FlowCoeff"):
-    #WE NEED TO SEPARATE THE CASES WHERE WE HAVE A PUBGRAPH AND A REVERSEPUBGRAPH
-    #FOR THE WHILE ONLY DO PUBGRAPH, DO REVERSEPUBGRAPH LATER
-    #IS THERE A MORE EFFICIENT WAY TO DO THIS??
-    
+def MonoplexFlow_addNode(g, node, depth = float('inf'), coeffname="FlowCoeff"):    
     def get_source_nodes(dag):
 	l = []	
 	for n in dag.graph.getNodes():
@@ -415,60 +432,19 @@ def MonoplexFlow_addNode(g, node, depth = float('inf'), coeffname="FlowCoeff"):
 	return calculate_flow(dag)
 
     
-    def transfer_flow(depth):
-        dag = g.addSubGraph(InducedDagGraph,node=node, depth = depth, direction = "direct") #get the induced dag
-        coeff = dag.graph.getDoubleProperty("TempCoeff")
-        coeff_old = g.graph[coeffname]
-
-        coeff.setAllNodeValue(0.0) #put all values of the dag to 0. This is so that we only calculate the flow of the added node
-        coeff[node] = 1.0 #set the value of the coeff to 1 in the dag
-        coeff_old[node] = 0.0 #set it to 0 in the graph
-        calculate_flow(dag) #calculate the flow on the dag
-
-        g.delSubGraph(dag)
-
-    def transfer_flow_reversed():
-        pass
     
-    #we assume the node has just been added
-    if g.edgeDirection == "direct":
-        transfer_flow(depth)
-    elif g.edgeDirection == "reversed":
-        print "not yet implemented"
-        return
-    else:
-        print "Must be an oriented publication graph"
-        return
+    dag = g.addSubGraph(InducedDagGraph,node=node, depth = depth, direction = "direct") #get the induced dag
+    coeff = dag.graph.getDoubleProperty("TempCoeff")
+    coeff_old = g.graph[coeffname]
 
-    
+    coeff.setAllNodeValue(0.0) #put all values of the dag to 0. This is so that we only calculate the flow of the added node
+    coeff[node] = 1.0 #set the value of the coeff to 1 in the dag
+    coeff_old[node] = 0.0 #set it to 0 in the graph
+    calculate_flow(dag) #calculate the flow on the dag
 
-#Calculate the monoplex flow dynamically    
-#Can add depth!
-def MonoplexFlow_dynamic(g, depth = float('inf'), coeffname="FlowCoeff"):
-    #Do something to check whether of the coeffs have already been calculated or not
-    if g.edgeDirection != "direct" and g.edgeDirection != "reversed":
-        print "Must be an oriented publication graph"
-        return
-    
-    coeff = g.graph.getDoubleProperty(coeffname)
-    gr = g.addSubGraph(EmptyGraph)
-    construction_order,edges = GetConstructionOrder(g)
+    g.delSubGraph(dag)
 
-    k=0
-    for n in construction_order: #for all remaining nodes
-        #add the node and its out edges
-        gr.graph.addNode(n)
-        for t in edges[n]:
-            e = g.graph.existEdge(n,t) #have to do this otherwise it creates duplicate edges...
-            gr.graph.addEdge(e) 
-        k+=1
-        #update the flow of the graph
-        MonoplexFlowAddNode(gr, n, depth = depth, coeffname = coeffname)
-        if k%100 == 0:
-            print k
-        
-    #now the graph's coeffs should be uptodate. Delete the subgraph, we don't need it anymore
-    g.delSubGraph(gr)
+
 
 
 ####Same functions as the monoplex flow but we don't divide the flow by the outdegree when we transfer it
@@ -510,7 +486,49 @@ def MonoplexFlowUnbounded_static(g, coeffname="FlowUnboundedCoeff"):
     g.delSubGraph(gr)
 
 
-#TODO add the depth
+#####AlphaMonoplexFlowUnbounded
+
+def AlphaMonoplexFlowUnbounded_static(g, alpha, coeffname="AlphaFlowUnboundedCoeff"):
+    if coeffname == "AlphaFlowUnboundedCoeff":
+        coeffname = str(alpha)+"FlowUnboundedCoeff"
+    
+    def get_source_nodes(g):
+	l = []	
+	for n in g.graph.getNodes():
+		if g.graph.indeg(n) == 0 :
+			l+=[n]
+	return l
+    def calculate_flow_unbounded(g):
+        metric = g.graph[coeffname]
+        if g.nNodes() == 0:	
+		return 
+	source_list = get_source_nodes(g)
+	for n in source_list:
+            for e in g.graph.getOutEdges(n):
+                m = g.graph.target(e)
+                metric[m] = metric[m]+metric[n]*alpha
+                metric[e] = metric[n]*alpha
+            g.graph.delNode(n)	
+	return calculate_flow_unbounded(g)
+    
+    if tlp.AcyclicTest.isAcyclic(g.graph) == False:
+        print "Graph not acyclic!"
+        return
+
+    if g.edgeDirection != "direct" and g.edgeDirection != "reversed":
+        print "Must be an oriented publication graph"
+        return
+
+    metric = g.graph.getDoubleProperty(coeffname)
+    metric.setAllNodeValue(1.0)
+    
+    gr = g.addSubGraph(CloneGraph)
+            
+
+    calculate_flow_unbounded(gr)
+    g.delSubGraph(gr)
+
+
 def MonoplexFlowUnbounded_addNode(g, node, depth = float('inf'), coeffname="FlowUnboundedCoeff"):
     def get_source_nodes(dag):
 	l = []	
@@ -534,59 +552,21 @@ def MonoplexFlowUnbounded_addNode(g, node, depth = float('inf'), coeffname="Flow
                 dag.graph.delNode(n)	
 	return calculate_flow_unbounded(dag)
     
-    def transfer_flow(depth):
-        dag = g.addSubGraph(InducedDagGraph,node=node, depth = depth, direction = "direct") #get the induced dag
-        coeff_old = g.graph[coeffname]
-        coeff = dag.graph.getDoubleProperty("TempCoeff")
-
-        coeff.setAllNodeValue(0.0)
-        coeff[node] = 1.0 #add the node of the coeff
-        coeff_old[node] = 0.0
-        
-        calculate_flow_unbounded(dag) #calculate the flow on the dag
-
-        g.delSubGraph(dag)
-
-    def transfer_flow_reversed():
-        pass
     
-    #we assume the node has just been added
-    #we assume it's a pubgraph and not a reversepubgraph
-    if g.edgeDirection == "direct":
-        transfer_flow(depth)
-    elif g.edgeDirection == "reversed":
-        print "not yet implemented"
-        return
-    else:
-        print "Must be an oriented publication graph"
-        return
+    dag = g.addSubGraph(InducedDagGraph,node=node, depth = depth, direction = "direct") #get the induced dag
+    coeff_old = g.graph[coeffname]
+    coeff = dag.graph.getDoubleProperty("TempCoeff")
 
-#TODO add the depth
-def MonoplexFlowUnbounded_dynamic(g, depth = float('inf'), coeffname = "FlowUnboundedCoeff"):
-    #Do something to check whether of the coeffs have already been calculated or not
-    if g.edgeDirection != "direct" and g.edgeDirection != "reversed":
-        print "Must be an oriented publication graph"
-        return
-    
-    coeff = g.graph.getDoubleProperty(coeffname)
-    gr = g.addSubGraph(EmptyGraph)
-    construction_order,edges = GetConstructionOrder(g)
-
-    k=0
-    for n in construction_order: #for all remaining nodes
-        #add the node and its out edges
-        gr.graph.addNode(n)
-        for t in edges[n]:
-            e = g.graph.existEdge(n,t)
-            gr.graph.addEdge(e) #have to do this otherwise it creates duplicate edges... 
-        k+=1
-        #update the flow of the graph
-        MonoplexFlowUnboundedAddNode(gr, n, depth= depth, coeffname = coeffname)
-        if k%100 == 0:
-            print k
+    coeff.setAllNodeValue(0.0)
+    coeff[node] = 1.0 #add the node of the coeff
+    coeff_old[node] = 0.0
         
-    #now the graph's coeffs should be uptodate. Delete the subgraph, we don't need it anymore
-    g.delSubGraph(gr)
+    calculate_flow_unbounded(dag) #calculate the flow on the dag
+
+    g.delSubGraph(dag)
+
+
+
 
 
 def KMonoplexFlowUnbounded_static(g, depth=float('inf'), coeffname="KFlowUnboundedCoeff"): 
@@ -776,6 +756,9 @@ def MultiplexFlowSum_static(g, coeffname="MultiplexFlowSumCoeff"):
         round_to_one(g,e)   
 
 
+#Multiplex Flow Sum Add Node : basically, you must give flow to each node according to its belonging to a certain layer. First get all the nodes at distance 1 of the added node. Their number is the number of layers the added node belongs to.
+
+        
 #Calculates the flow of the whole graph as if each shared edge is an independant edge. I.e. if an edge belongs to N subgraphs, it is considered to be N edges
 def MultiplexFlowAggregated_static(g, coeffname = "MultiplexFlowAggregatedCoeff"):
     #Very similar to the flow function, except you ponder the degree of a node by sharedCitedLength. To simulate the fact that there are "multiple edges".
@@ -884,67 +867,36 @@ def KMultiplexFlowAggregated_static(g, depth = float('inf'),coeffname = "KMultip
 
 
 
-def MultiplexFlowSelective_static(g, coeffname = "MultiplexFlowSelectiveCoeff"):
-    #First things first, segregate between the different types of pipes
+def AlphaMultiplexFlowAggregated_static(g, alpha, coeffname = "AlphaMultiplexFlowAggregatedCoeff"):
+    if coeffname == "AlphaMultiplexFlowAggregatedCoeff":
+        coeffname = str(alpha)+"MultiplexFlowAggregatedCoeff"
 
-    def count_elements(H):
-        count = 0
-        for h in H:
-            for k in H[h]:
-                count+=1
-        print count
-    
     def get_source_nodes(g):
 	l = []	
 	for n in g.graph.getNodes():
 		if g.graph.indeg(n) == 0 :
 			l+=[n]
 	return l
-
-    flow_ancestry = {m : {} for m in g.graph.getNodes()} #initialize the flow ancestry
     
     def calculate_flow(g):
-        #flow_ancestry will always have too much information but nobody cares, as long as it has the information on the source nodes
-        
-        metric = g.graph[coeffname]
-        sharedCitedLength = g.graph["sharedCitedLength"]
-        sharedCitedBy = g.graph["sharedCitedBy"]
-        
-        
 	if g.nNodes() == 0:	
             return
-        print g.nNodes()
+        metric = g.graph[coeffname]
+        sharedCitedLength = g.graph["sharedCitedLength"]
 	source_list = get_source_nodes(g)
 
-        #transfer the intrinsic value of the publication, i.e. 1, but also transfer the received flow according to its ancestry
-        for n in source_list:                                        
+        for n in source_list:
+            totaloutdeg = 0
             for e in g.graph.getOutEdges(n):
-                m  = g.graph.target(e)
-                flowint = 1.0/(g.graph.outdeg(n)*sharedCitedLength[e]) #le flot intrinseque a la publication diffuse sur ce chaque sous arete de l'arete
-                    
-                for o in sharedCitedBy[e]: #on y ajoute le flot herite dependant de la sous arete et on met a jour flow_ancestry
-                    p = tlp.node(o)
-                    if p not in flow_ancestry[m]:
-                        flow_ancestry[m][p] = 0.0
-                    if p not in flow_ancestry[n]:
-                        flow_ancestry[n][p] = 0.0
+                totaloutdeg+=sharedCitedLength[e] #get the total degree, which is the sum of the shared cited lengths of each outgoing edge
+            for e in g.graph.getOutEdges(n):
+                m = g.graph.target(e) #get the target of the edge
+                metric[m] = metric[m]+metric[n]*alpha*sharedCitedLength[e]/totaloutdeg 
+                metric[e] = metric[n]*alpha*sharedCitedLength[e]/totaloutdeg
 
-                    #Calculate the "outdegree" of the node for the particular layer concerned
-                    #can probably make this more efficient by checking the deg of the node in the associated multiplex subgraph
-                    pdeg = 0
-                    for e in g.graph.getOutEdges(n):
-                        if o in sharedCitedBy[e]:
-                            pdeg += 1
-                        
-                    metric[m] += flowint + flow_ancestry[n][p]/pdeg
-                    metric[e] += flowint + flow_ancestry[n][p]/pdeg
-                    flow_ancestry[m][p] += flowint + flow_ancestry[n][p]/pdeg #update the flow ancestry of the new node
+            g.graph.delNode(n)	
 
-                        
-
-            g.graph.delNode(n)
-		                
-	return calculate_flow(g)
+        return calculate_flow(g)
     
     """if g.__class__.__name__ != "MultiplexGraph" and g.__class__.__name__ != "MultiplexDagGraph":
         print "Must be used with a multiplex graph"
@@ -954,14 +906,12 @@ def MultiplexFlowSelective_static(g, coeffname = "MultiplexFlowSelectiveCoeff"):
             
     coeff = g.graph.getDoubleProperty(coeffname)
     coeff.setAllNodeValue(1.0)
-    coeff.setAllEdgeValue(0.0)
     calculate_flow(gr)
     g.delSubGraph(gr)
-    print "the element count is"
-    count_elements(flow_ancestry)
 
+    
 
-def MultiplexFlowSelectiveNew_static(g, coeffname = "MultiplexFlowSelectiveCoeff"):
+def MultiplexFlowSelective_static(g, coeffname = "MultiplexFlowSelectiveCoeff"):
     #get the association between node id and subgraph id
     id2subgraph = {}
     for gkey in g.subGraphs:
@@ -1040,8 +990,9 @@ def MultiplexFlowSelectiveNew_static(g, coeffname = "MultiplexFlowSelectiveCoeff
     count_elements(flow_ancestry)
 
 
-    
-def MultiplexFlowSelectiveNewNew_static(g, coeffname = "MultiplexFlowSelectiveCoeff"):
+#Flow selective calculated as Flowsum with specific initial conditions
+#TODO
+def MultiplexFlowSelectiveNew_static(g, coeffname = "MultiplexFlowSelectiveCoeff"):
     def round_to_one(g, node): #rounds to 1 the pathological cases due to floating point arithmetic errors
         if abs(g.graph[coeffname][node] - 1.0) < 0.0000000001:
             g.graph[coeffname][node] = 1.0
@@ -1112,8 +1063,234 @@ def MultiplexFlowSelectiveNewNew_static(g, coeffname = "MultiplexFlowSelectiveCo
     for e in g.graph.getEdges():
         round_to_one(g,e)   
 
+
+#####Dynamic versions of the previous functions
+###For the Flow Sum
+#En gros
+#On determine a quelles couches le noeud ajoute appartient
+#On transmet le flot dans chaque couche
+#avec les bonnes conditions initiales
+#et puis basta la vista
+def MultiplexFlowSum_addNode(g, node, depth = float('inf'), coeffname = "MultiplexFlowSumCoeff"):
+    id2subgraph = {}
+    for gkey in g.parent.subGraphs:
+        if g.parent.subGraphs[gkey].name[0] == 'm' and g.parent.subGraphs[gkey].name[1] == 'x':
+            i = g.parent.subGraphs[gkey].name.split('mx')[1]
+            id2subgraph[root.id2pub[i].id] = gkey
+
+    def round_to_one(g, node): #rounds to 1 the pathological cases due to floating point arithmetic errors
+        if abs(g.graph[coeffname][node] - 1.0) < 0.0000000001:
+            g.graph[coeffname][node] = 1.0
+    
+    def get_source_nodes(g):
+	l = []	
+	for n in g.graph.getNodes():
+		if g.graph.indeg(n) == 0 :
+			l+=[n]
+	return l
+    def calculate_flow(g, coeffname):
+        metric = g.graph[coeffname]
+	if g.nNodes() == 0:	
+		return 
+	source_list = get_source_nodes(g)
+	for n in source_list:
+		for m in g.graph.getOutNodes(n):
+			metric[m] = metric[m]+metric[n]/g.graph.outdeg(n)
+		for e in g.graph.getOutEdges(n):
+			metric[e] = metric[n]/g.graph.outdeg(n)
+		g.graph.delNode(n)	
+	return calculate_flow(g, coeffname)
+
+
+    """if g.__class__.__name__ != "MultiplexGraph" and g.__class__.__name__ != "MultiplexDagGraph":
+        print "Must be used with a multiplex graph"
+        return"""
+            
+
+
+    coeff = g.graph.getDoubleProperty(coeffname)
+        
+    sharedCitedBy = g.parent.graph["sharedCitedBy"]
+    sharedCitedLength = g.parent.graph["sharedCitedLength"]
+        
+    for gkey in sharedCitedBy[node]:
+        graph = g.parent.subGraphs[id2subgraph[gkey]]
+        gr = graph.addSubGraph(CloneGraph)
+        metric = graph.graph.getDoubleProperty("tempcoeff")
+        metric.setAllNodeValue(0.0)
+        metric.setAllEdgeValue(0.0)
+
+        metric[node] = 1.0/sharedCitedLength[node]
+        calculate_flow(gr,coeffname="tempcoeff")
+         
+        #for each node add its coeff to the multiplex flow sum
+        print "g n nodes",g.nNodes()
+        print "graph n nodes",graph.nNodes()
+        for n in graph.graph.getNodes():
+            coeff[n] += metric[n]
+
+        #for each edge add its coeff to the multiplex flow sum
+        for e in graph.graph.getEdges():
+            coeff[e] += metric[e]
+
+        graph.delSubGraph(gr)
+
+
+
+
+###For the flow aggregated
+#add depth, so as to measure dynamic time for different values of k
+def MultiplexFlowAggregated_addNode(g, node, depth = float('inf'), coeffname="MultiplexFlowAggregatedCoeff"):
+    def get_source_nodes(dag):
+	l = []	
+	for n in dag.graph.getNodes():
+		if dag.graph.indeg(n) == 0 :
+			l+=[n]
+	return l
+    
+    def calculate_flow(dag):
+        metric = dag.graph["TempCoeff"]
+        coeff = g.graph[coeffname]
+        sharedCitedLength = g.graph["sharedCitedLength"]
+	if dag.nNodes() == 0:	
+            return
+	source_list = get_source_nodes(dag)
+	for n in source_list:
+            totaloutdeg = 0
+            for e in dag.graph.getOutEdges(n):
+                totaloutdeg+=sharedCitedLength[e] #get the total degree, which is the sum of the shared cited lengths of each outgoing edge
+            for e in dag.graph.getOutEdges(n):
+                m = dag.graph.target(e) #get the target of the edge
+                metric[m] = metric[m]+metric[n]*sharedCitedLength[e]/totaloutdeg 
+                metric[e] = metric[n]*sharedCitedLength[e]/totaloutdeg
+
+            coeff[n]+=metric[n] #update the coeff in the graph
+            dag.graph.delNode(n)	
+	return calculate_flow(dag)
+
     
     
+    dag = g.addSubGraph(InducedDagGraph,node=node, depth = depth, direction = "direct") #get the induced dag
+    coeff = dag.graph.getDoubleProperty("TempCoeff")
+    coeff_old = g.graph.getDoubleProperty(coeffname)
+
+    coeff.setAllNodeValue(0.0) #put all values of the dag to 0. This is so that we only calculate the flow of the added node
+    coeff[node] = 1.0 #set the value of the coeff to 1 in the dag
+    coeff_old[node] = 0.0 #set it to 0 in the graph
+    calculate_flow(dag) #calculate the flow on the dag
+
+    g.delSubGraph(dag)
+
+    
+
+
+
+###For the flow selective
+def MultiplexFlowSelective_addNode(g, node, depth = float('inf'), coeffname="MultiplexFlowSelectiveCoeff"):
+    #merdouille entre g et g.parent... Bien prendre en compte que l'on considere que le multiplex graph est contenu dans g.parent et non pas g. Et puis on ignore les ssgraphes autres que mx...
+    
+    #get the association between node id and subgraph id
+    id2subgraph = {}
+    for gkey in g.parent.subGraphs:
+        if g.parent.subGraphs[gkey].name[0] == 'm' and g.parent.subGraphs[gkey].name[1] == 'x':
+            i = g.parent.subGraphs[gkey].name.split('mx')[1]
+            id2subgraph[root.id2pub[i].id] = gkey
+
+    flow_ancestry = {m : {} for m in g.graph.getNodes()} #initialize the flow ancestry
+    
+    def count_elements(H):
+        count = 0
+        for h in H:
+            for k in H[h]:
+                count+=1
+        print count
+        
+    def get_source_nodes(dag):
+	l = []	
+	for n in dag.graph.getNodes():
+		if dag.graph.indeg(n) == 0 :
+			l+=[n]
+	return l
+    
+    def calculate_flow(dag):
+        metric = dag.graph["TempCoeff"]
+        coeff = g.graph[coeffname]
+        sharedCitedLength = g.parent.graph["sharedCitedLength"]
+        sharedCitedBy = g.parent.graph["sharedCitedBy"]
+        
+	if dag.nNodes() == 0:	
+            return
+	source_list = get_source_nodes(dag)
+	for n in source_list:
+            for e in dag.graph.getOutEdges(n):
+                m  = dag.graph.target(e)
+                   
+                for o in sharedCitedBy[e]: #on y ajoute le flot herite dependant de la sous arete et on met a jour flow_ancestry
+                    p = tlp.node(o)
+                    if p not in flow_ancestry[m]:
+                        flow_ancestry[m][p] = 0.0
+                    if p not in flow_ancestry[n]:
+                        flow_ancestry[n][p] = 0.0
+
+                    #Calculate the "outdegree" of the node for the particular layer concerned
+                    #can probably make this more efficient by checking the deg of the node in the associated multiplex subgraph
+                    pdeg = g.parent.subGraphs[id2subgraph[o]].graph.outdeg(n)
+                            
+                    metric[m] += flow_ancestry[n][p]/pdeg
+                    metric[e] += flow_ancestry[n][p]/pdeg
+                    flow_ancestry[m][p] += flow_ancestry[n][p]/pdeg #update the flow ancestry of the new node
+
+            coeff[n]+=metric[n] #update the coeff in the graph
+            dag.graph.delNode(n)	
+	return calculate_flow(dag)
+
+    
+    dag = g.addSubGraph(InducedDagGraph,node=node, depth = depth, direction = "direct") #get the induced dag
+    metric = dag.graph.getDoubleProperty("TempCoeff")
+    coeff = g.graph.getDoubleProperty(coeffname)
+
+    metric.setAllNodeValue(0.0) #put all values of the dag to 0. This is so that we only calculate the flow of the added node
+    metric.setAllEdgeValue(0.0)
+    metric[node] = 1.0 #set the value of the coeff to 1 in the dag
+    coeff[node] = 0.0 #set it to 0 in the graph
+
+
+        
+    #Transfer the flow in the initial case
+    sharedCitedLength = g.parent.graph["sharedCitedLength"]
+    sharedCitedBy = g.parent.graph["sharedCitedBy"]
+        
+    for e in dag.graph.getOutEdges(node):
+        m  = dag.graph.target(e)
+        flowint = 1.0/(dag.graph.outdeg(node)*sharedCitedLength[e]) #le flot intrinseque a la publication diffuse sur ce chaque sous arete de l'arete
+                
+                    
+        for o in sharedCitedBy[e]: #on y ajoute le flot herite dependant de la sous arete et on met a jour flow_ancestry
+            p = tlp.node(o)
+            if p not in flow_ancestry[m]:
+                flow_ancestry[m][p] = 0.0
+            if p not in flow_ancestry[node]:
+                flow_ancestry[node][p] = 0.0
+
+            #Calculate the "outdegree" of the node for the particular layer concerned
+            #can probably make this more efficient by checking the deg of the node in the associated multiplex subgraph
+            pdeg = g.parent.subGraphs[id2subgraph[o]].graph.outdeg(node)
+            
+            metric[m] += flowint + flow_ancestry[node][p]/pdeg
+            metric[e] += flowint + flow_ancestry[node][p]/pdeg
+            flow_ancestry[m][p] += flowint + flow_ancestry[node][p]/pdeg #update the flow ancestry of the new node
+
+    coeff[node]+=metric[node] #update the coeff in the graph
+    dag.graph.delNode(node)
+
+    #now do the rest
+    calculate_flow(dag) #calculate the flow on the dag
+
+    g.delSubGraph(dag)
+
+    
+
+
 
 
 ####Unbounded versions of all the previous multiplex flow functions
@@ -1223,6 +1400,44 @@ def MultiplexFlowAggregatedUnbounded_static(g, coeffname = "MultiplexFlowAggrega
     g.delSubGraph(gr)
 
 
+def AlphaMultiplexFlowAggregatedUnbounded_static(g, alpha, coeffname = "AlphaMultiplexFlowAggregatedUnboundedCoeff"):
+    if coeffname == "AlphaMultiplexFlowAggregatedUnboundedCoeff":
+        coeffname = str(alpha)+"MultiplexFlowAggregatedUnboundedCoeff"
+    def get_source_nodes(g):
+	l = []	
+	for n in g.graph.getNodes():
+		if g.graph.indeg(n) == 0 :
+			l+=[n]
+	return l
+    
+    def calculate_flow(g):
+	if g.nNodes() == 0:	
+            return
+        metric = g.graph[coeffname]
+        sharedCitedLength = g.graph["sharedCitedLength"]
+	source_list = get_source_nodes(g)
+
+        for n in source_list:
+            for e in g.graph.getOutEdges(n):
+                m = g.graph.target(e) #get the target of the edge
+                metric[m] = metric[m]+alpha*metric[n]*sharedCitedLength[e] 
+                metric[e] = alpha*metric[n]*sharedCitedLength[e]
+
+            g.graph.delNode(n)	
+
+        return calculate_flow(g)
+    
+    """if g.__class__.__name__ != "MultiplexGraph" and g.__class__.__name__ != "MultiplexDagGraph":
+        print "Must be used with a multiplex graph"
+        return"""
+
+    gr = g.addSubGraph(CloneGraph)
+            
+    coeff = g.graph.getDoubleProperty(coeffname)
+    coeff.setAllNodeValue(1.0)
+    calculate_flow(gr)
+    g.delSubGraph(gr)
+    
 
 def KMultiplexFlowAggregatedUnbounded_static(g, depth = float('inf'),coeffname = "KMultiplexFlowAggregatedUnboundedCoeff"):
     if depth==float('inf'):
@@ -1354,6 +1569,37 @@ def MultiplexFlowSelectiveUnbounded_static(g, coeffname = "MultiplexFlowSelectiv
     count_elements(flow_ancestry)
     
 
+
+#####PLACEHOLDER FUNCTION FOR CALCULATING DYNAMIC MEASURES
+def Measure_dynamic(g, add_node_func, coeffname, depth=float('inf')):
+    #Do something to check whether of the coeffs have already been calculated or not
+    if g.edgeDirection != "direct" and g.edgeDirection != "reversed":
+        print "Must be an oriented publication graph"
+        return
+    
+    coeff = g.graph.getDoubleProperty(coeffname)
+    gr = g.addSubGraph(EmptyGraph)
+    construction_order,edges = GetConstructionOrder(g)
+
+    k=0
+    for n in construction_order: #for all remaining nodes
+        #add the node and its out edges
+        gr.graph.addNode(n)
+        for t in edges[n]:
+            e = g.graph.existEdge(n,t) #have to do this otherwise it creates duplicate edges...
+            gr.graph.addEdge(e) 
+        k+=1
+        #update the flow of the graph
+        add_node_func(gr, n, depth = depth, coeffname = coeffname)
+        if k%100 == 0:
+            print k
+        
+    #now the graph's coeffs should be uptodate. Delete the subgraph, we don't need it anymore
+    g.delSubGraph(gr)
+
+
+
+    
 
 #####AUTHOR MEASURES
 #add more measures. Centrality, size of the associated cluster, eccentricity, etc.

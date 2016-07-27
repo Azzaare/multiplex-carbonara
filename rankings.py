@@ -173,12 +173,13 @@ def PrintTop20(g, names):
     
 
 
-def PrintDifferences(g, coeffname1, coeffname2):
+def PrintDifferences(g, coeffname1, coeffname2, prec = "%.5f"):
     coeff1 = g.graph[coeffname1]
     coeff2 = g.graph[coeffname2]
 
     for n in g.graph.getNodes():
-        if coeff1[n] != coeff2[n]:
+        if prec % coeff1[n] != prec % coeff2[n]:
+        #if coeff1[n] != coeff2[n]:
             print n," : ",coeff1[n]," | ",coeff2[n]
 
 
@@ -308,21 +309,6 @@ def InducedCoeffs(names, oldfilename, newfilename):
 
 
 #####Time comparison rankings
-
-
-def timeit(method):
-
-    def timed(*args, **kw):
-        ts = time.time()
-        result = method(*args, **kw)
-        te = time.time()
-
-        print '%r (%r, %r) %2.2f sec' % \
-              (method.__name__, args, kw, te-ts)
-        return result
-
-    return timed
-    
 #A function to calculate the time taken to calculate a measure in a static way (but can be used with a dynamic measure). G must contain n subgraphs upon which the algo will be tried
 def MeasureTime_static(g, measure, filename = ""):
     H = {}
@@ -353,7 +339,7 @@ def MeasureTime_static(g, measure, filename = ""):
 
 
 #TO TEST 
-def MeasureTime_dynamic(g, measure_addnode, filename = ""):
+def MeasureTime_dynamic(g, measure_addnode, filename = "", threshold = 0):
     H = {}
     i=0
     for gk in g.subGraphs:
@@ -387,6 +373,11 @@ def MeasureTime_dynamic(g, measure_addnode, filename = ""):
         graph.delSubGraph(gr)
         H[gk] = totaltime
         i+=1
+        print totaltime
+        #if the last one was too long we stop here
+        if totaltime > threshold:
+            break
+        
         
     if filename != "": #if we decide to save it to an excel file
         wb = ox.Workbook()
@@ -394,7 +385,7 @@ def MeasureTime_dynamic(g, measure_addnode, filename = ""):
         ws.title = filename
 
         i = 1
-        for gk in g.subGraphs:
+        for gk in H:
             ws.cell(row = i, column = 1).value = g[gk].nNodes()
             ws.cell(row = i, column = 2).value = H[gk]
             i+=1
@@ -406,7 +397,7 @@ def MeasureTime_dynamic(g, measure_addnode, filename = ""):
 
 
 #function which measures the time it takes to add one node and update the whole measure. Measure must be of type *_AddNode
-def MeasureTime_addnode(g, measure_static, measure_addnode, filename = ""): 
+def MeasureTime_addNode(g, measure_static, measure_addnode, filename = ""): 
     H = {}
     i=0
 
@@ -415,6 +406,7 @@ def MeasureTime_addnode(g, measure_static, measure_addnode, filename = ""):
     for gk in g.subGraphs:
         print i
         graph = g[gk]
+                
         measure_static(graph)
         node_to_add = node_order[graph.nNodes()]
         
@@ -425,11 +417,15 @@ def MeasureTime_addnode(g, measure_static, measure_addnode, filename = ""):
             graph.graph.addEdge(e)
 
         #calculate the time it takes to update the measure
+        #grraph = graph.addSubGraph(CloneGraph)
         ts = time.time()
         measure_addnode(graph,node_to_add)
         te = time.time()
         H[gk] = te - ts
         i+=1
+
+        #graph.delSubGraph(grraph)
+        
         graph.graph.delNode(node_to_add)
         
     if filename != "": #if we decide to save it to an excel file
@@ -446,10 +442,6 @@ def MeasureTime_addnode(g, measure_static, measure_addnode, filename = ""):
 
         wb.save(filename+".xlsx")
         
-    print g.nNodes()
     return H
     
 
-
-
-        

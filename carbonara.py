@@ -54,20 +54,14 @@ Fusion noeuds seulement si memes auteurs, et dans ce cas faire une vraie fusion.
 
 Todo:
 
-Medium priority :
--faire version dynamique des mesures multiplex
 
 Low priority:
--determiner a partir de combien de noeuds a ajouter dynamiquement cela devient il plus rentable de les ajouter statiquement
--tracer les courbes tpsdynamic/tpsstatic
 -faire marcher flowselectivenewnew
 
 Todo:
 -sortir tous les tableaux de mesure du temps
 -essayer de fitter des courbes theoriques pour ces tableaux de mesure du temps
 -sortir toutes les correlations pour tous les types de coeff ranks, pub ou aut, possibles
--reecrire rapport un peu mieux
--changer l'introduction pour vraiment montrer le fait qu'on va pas revolutioner les classements et dire que le but c'est vraiment de voir quelles publications ressortent plus avec nos mesures
 -determiner les plus grands "sauts" entre deux mesures V Essayer de plutot regarder les sauts en coefficients plutot que les sauts en classement
 
 Todo sur le long terme:
@@ -95,10 +89,14 @@ Pour commencer:
 -degre (pour le lol)
 -flot, kflot avec k variant en statique et en dynamique
 -addnode, kaddnode avec k variant
+-en gros faire varier les k. Voir comment ca impacte le temps de calcul.
+
+En gros, le k va avoir un impact sur le temps de calcul, et le k et la divisibilite de l'information va avoir un impact sur les resultats (coeff de correlation)
+
 Ensuite:
 -les flots multiplexes en statique
--les flots multiplexes addnode TODO
--les flots multiplexes en dynamique TODO
+-les flots multiplexes addnode 
+-les flots multiplexes en dynamique 
 
 Enfin:
 -fitter des courbes polynomiales
@@ -108,191 +106,205 @@ Enfin:
 Pour terminer : 
 -construire "le pire DAG possible" et tester les mesures la dessus
 
-TODO : modifier la version dynamique (voire statique) de degree et kdegree pour que ca ne comptabilise pas le node (faire -1)
 
 Observation : en fait nous on fait varier nos mesures flot selon 2 dimensions : la divisibilite de l'information, et la distance de propagation de l'information
 
+
+
+
+TODO :
+-pour tous les coefficients, ne garder que x chiffres significatifs
+
+
+TODO WITH VERY HIGH PRIORITY :
+debugger le bordel avec MeasureTime et les fonctions multiplexes
+
+
+TODO WITH EXTREMELY HIGH PRIORITY : 
+voir les correlations des percolations auteur pour les differentes mesures
+
+TODO WITH SO MUCH HIGH PRIORITY IT FUCKS YOUR BRAIN :
+WHY THE FUCK IS NOTHING WORKING? AGGREGATED DIVISION BY 0 WTF??
+YE COUMPRI, completemet changer la maniere dont on mesure le time. Enlever samplemultiplexsubgraphs, faire juste samplesubgraphs. Et ensuite, a chaque iteration, recalculer le ss graphe
+
+Ou faire une fonction "updatemultiplex"
+
+Ouais faire ca en fait
+Ce sera plus facile
+et comme ca ya rien a changer
+
+Bref se demerder
+
+Pour l'instant stop la dessus. On se preoccupe d'autres choses
+Faire le alpha Monoplex Flow. Tester les correlations
 """
 
-def testranks():
-    reloading()
-    g = root[1][2][3]
-    #g = root.addSubGraph(PubGraph)
-    #g = g.addSubGraph(InducedConnexMaxGraph)
-    #g = g.addSubGraph(MultiplexGraph)
-
-    """me.MonoplexFlow_static(g)
-    me.MultiplexFlowAggregated_static(g)
-    me.MultiplexFlowSum_static(g)
-    me.MultiplexFlowSelectiveNew_static(g)"""
-
-    
-    gaut = root[1][2].addSubGraph(AuthorGraph)
-    names = ["FlowCoeff","MultiplexFlowAggregatedCoeff","MultiplexFlowSumCoeff","MultiplexFlowSelectiveCoeff"]
-
-    gf.PubCoeffsToAuthorCoeffs(g,gaut,names)
-    names = [n+"PTASumPA" for n in names]
-    
-    rk.CompareRank(gaut, names)
-
-    totalnames = []
-    for i in range(len(names)):
-        for j in range(i):
-            totalnames+=["RankDiff"+names[i]+"-"+names[j]]
-            totalnames+=["RankDiff"+names[j]+"-"+names[i]]
-    
-    rk.PrintTop20(gaut, totalnames)
-    
-    
-def testselective():
-    reloading()
-
-    #g = root.addSubGraph(PubGraph)
-    #g = g.addSubGraph(InducedConnexMaxGraph)
-    #g = g.addSubGraph(MultiplexGraph)
-    g = root[1][2][3]
-    
-    #me.MultiplexFlowSelectiveNew_static(g, coeffname = "MultiplexFlowSelectiveNewCoeff")
-    me.MultiplexFlowSelectiveNewNew_static(g, coeffname = "MultiplexFlowSelectiveNewNewCoeff")
-
-    #rk.CompareMeasures(g,["MultiplexFlowSelectiveNewCoeff","MultiplexFlowSelectiveNewNewCoeff"])
-    #rk.PrintTop20(g,["MultiplexFlowSelectiveNewCoeff","MultiplexFlowSelectiveNewNewCoeff"])
-    for n in g.graph.getNodes():
-        print g.graph["MultiplexFlowSelectiveNewNewCoeff"][n]
-        
-
-def testtruc():
-    reloading()
-    g = root.addSubGraph(PubGraph)
-    g = g.addSubGraph(InducedConnexMaxGraph)
-    gf.SamplePartiallyConstructedMultiplexSubGraphs(g,100,2000,100)
-    #g = root[1][2]
-    #g = root[27384][27385]
-    #rk.MeasureTime_static(g, me.Degree_static,"degree")
-    rk.MeasureTime_static(g, me.MonoplexFlow_static,"flow")
-    #rk.MeasureTime_dynamic(g, me.MonoplexFlow_static, me.MonoplexFlow_addNode, "flowaddnode2")
-    KMonoplexFlow_addNode = lambda g, node, depth = 2, coeffname="FlowCoeff" : me.MonoplexFlow_addNode(g,node,depth,coeffname)
-    
-    rk.MeasureTime_dynamic(g, KMonoplexFlow_addNode, "flowaddnode2dynamic")
-    #rk.MeasureTime_static(g, me.MultiplexFlowSum_static,"mxflowsum")
-    #rk.MeasureTime_static(g, me.MultiplexFlowAggregated_static,"mxflowaggregated")
-    #rk.MeasureTime_static(g, MonoplexFlow_static,"mxflowselective")
-    
-def testhindex():
-    reloading()
-    g = root.addSubGraph(PubAuthorGraph)
-    me.HIndexPubAut_static(g)
-    l = rk.RankAuthorsByCoeff(g, g.graph["HIndexCoeff"])
-    for i in range(20):
-        print g.graph["node_property"][l[i]]
-
-    gr = root.addSubGraph(AuthorGraph)
-    gf.TransferCoeff(g,gr,"HIndexCoeff")
-    l = rk.RankAuthorsByCoeff(gr, gr.graph["HIndexCoeff"])
-    for i in range(20):
-        print gr.graph["node_property"][l[i]]
-
-def testauthorcoeffs():
-    reloading()
-    gaut = root[1][2].addSubGraph(AuthorGraph)
-    g = root[1][2][3]
-    rk.PubCoeffsToAuthorCoeffs(g,gaut,["DegreeCoeff","FlowCoeff", "MultiplexFlowSumCoeff","MultiplexFlowAggregatedCoeff","MultiplexFlowSelectiveCoeff"], rk.PubToAuthorPonderedSum)
-
-    rk.AuthorCoeffToRank(gaut, ["authorDegreeCoeff","authorFlowCoeff", "authorMultiplexFlowSumCoeff","authorMultiplexFlowAggregatedCoeff","authorMultiplexFlowSelectiveCoeff"])
-
-    tlp.saveGraph(gaut.graph,"authorgraph.tlp")
-    
-    
-def correlations():
-    reloading()
-    g = root[1][2][3]
-    """g = root.addSubGraph(PubGraph)
-    g = g.addSubGraph(InducedConnexMaxGraph)
-    g = g.addSubGraph(MultiplexGraph)
-
-    me.MonoplexFlow_static(g)
-    me.MultiplexFlowAggregated_static(g)
-    me.MultiplexFlowSum_static(g)
-    me.MultiplexFlowSelective_static(g)
-    me.Degree_static(g)
-
-    names = ["DegreeCoeff","FlowCoeff","MultiplexFlowSumCoeff","MultiplexFlowAggregatedCoeff","MultiplexFlowSelectiveCoeff"]
-    
-    rk.ExportCoeffs_ordered(g, names, rk.RankPubsByCoeff, rk.KendallTauDistance, "coeffskendall")
-
-    rk.CoeffToRank(g, g.graph["FlowCoeff"], "FlowCoeffRank")
-    rk.CoeffToRank(g, g.graph["DegreeCoeff"], "DegreeCoeffRank")
-    rk.CoeffToRank(g, g.graph["MultiplexFlowSumCoeff"], "MultiplexFlowSumCoeffRank")
-    rk.CoeffToRank(g, g.graph["MultiplexFlowAggregatedCoeff"], "MultiplexFlowAggregatedCoeffRank")
-    rk.CoeffToRank(g, g.graph["MultiplexFlowSelectiveCoeff"], "MultiplexFlowSelectiveCoeffRank")"""
-    rk.PubCoeffToRank(g, ["FlowCoeff","DegreeCoeff","MultiplexFlowSumCoeff","MultiplexFlowAggregatedCoeff","MultiplexFlowSelectiveCoeff"])
-    
-    #l = rk.BestAuthorProgressionRank(g, g.graph["DegreeCoeff"],g.graph["FlowCoeff"])
-    #for i in range(20):
-     #   print i, " : ", root.graph["node_property"][l[i]]
-    tlp.saveGraph(g.graph, "rapportgraph.tlp")
-
-def newselective():
-    reloading()
-    """g = root.addSubGraph(PubGraph)
-    g = g.addSubGraph(MultiplexGraph)
-    me.MonoplexFlow_static(g)
-    me.MultiplexFlowSelective_static(g)
-    me.MultiplexFlowSelectiveNew_static(g)"""
-    g = root[3][4]
-    
-    rk.CompareMeasures(g,["FlowCoeff","MultiplexFlowSelectiveCoeff","MultiplexFlowSelectiveNewCoeff"],rk.SpearmanRankCoeff)
-    rk.PrintTopAuthors(g,["FlowCoeff","MultiplexFlowSelectiveCoeff","MultiplexFlowSelectiveNewCoeff"],rk.PubToAuthorPonderedSum)
-
-def inducedcoefftest():
-    reloading()
-    H = rk.InducedCoeffs(["FlowCoeff","5FlowCoeff","20FlowCoeff"], "corcoef","newcorcef")
-    print H
-
-def timetest():
-    reloading()
-    #g = root[27776]
-    g = root.addSubGraph(PubGraph)
-    g = g.addSubGraph(InducedConnexMaxGraph)
-    print "plop"
-    gf.SamplePartiallyConstructedSubGraphs(g, 100, 5000, 500)
-    g.printSubGraphs()
-    rk.MeasureTime_static(g, me.MonoplexFlow_dynamic, "testtime")
-
-def partialgraphtest():
-    reloading()
-    g = root.addSubGraph(PubGraph)
-    print "plop"
-    g = g.addSubGraph(PartiallyConstructedGraph, numnodes = 15000)
-    return g
-    
-#An example of how to calculate the measures:
-
-def timedynamictest():
-    reloading()
-    g = root.addSubGraph(PubGraph)
-    g = g.addSubGraph(InducedConnexMaxGraph)
-    g = g.addSubGraph(InducedConnexRandomGraph, numnodes = 15000)
-    rk.MeasureTime_dynamic(g, me.MonoplexFlow_static, "prout")
 
 def test():
     reloading()
-    g = root.addSubGraph(PubGraph) #add a publication graph
-    g = g.addSubGraph(InducedConnexMaxGraph) #get the big connex graph contained in the publication graph
-    g = g.addSubGraph(MultiplexGraph)#demultiplex the graph
-    me.MonoplexFlow_static(g) #calculate the monoplex flow measure
-    me.Degree_static(g) #calculate the degree measure
-    me.MultiplexFlowSum_static(g) #calculate the multiplex flow sum measure
-    me.MultiplexFlowAggregated_static(g)#calculate the multiplex flow aggregated measure
-    me.MultiplexFlowSelective_static(g)#calculate the multiplex flow selective measure
-
-    #get the names of the coeffs
-    names = ["FlowCoeff","DegreeCoeff","MultiplexFlowSumCoeff","MultiplexFlowAggregatedCoeff","MultiplexFlowSelectiveCoeff"]
-    #print the top authors of the measures, using a reduction function which divides the coeff of a pub and distributes it among its authors.
-    rk.PrintTopAuthors(g,names,rk.PubToAuthorPonderedSum)
-    #calculate the spearman correlations of the measures and export them to a file
-    rk.ExportCoeffs_ordered(g, names, rk.RankPubsByCoeff, rk.SpearmanRankCoeff, "test")
+    g = root.addSubGraph(PubGraph)
     
+
+
+def alphatest():
+    reloading()
+    g = root.addSubGraph(PubGraph)
+    g = g.addSubGraph(InducedConnexMaxGraph)
+    #g = root[1][2]
+    #gaut = root[1][2][3]
+    gaut = root[1].addSubGraph(AuthorGraph)
+
+    root.printAllSubGraphs()
+    
+    me.AlphaMonoplexFlow_static(g,alpha = 0.2)
+    me.MonoplexFlow_static(g)
+    me.AlphaMonoplexFlow_static(g,alpha = 0.5)
+
+
+    names = ["0.2FlowCoeff","0.5FlowCoeff","FlowCoeff"]
+    
+    rk.CompareMeasures(g,names)
+    gf.PubCoeffsToAuthorCoeffs(g,gaut,names)
+    rk.PrintTop20(gaut,[i+"PTASumPA" for i in names])
+
+    
+def timetest():
+    reloading()
+    g = root.addSubGraph(PubGraph)
+    g = g.addSubGraph(InducedConnexRandomGraph, numnodes = 100)
+    g = g.addSubGraph(MultiplexGraph)
+    me.MultiplexFlowSum_static(g)
+    me.Measure_dynamic(g, me.MultiplexFlowSum_addNode, coeffname="MultiplexFlowSumDynamicCoeff")
+
+    rk.CompareMeasures(g,["MultiplexFlowSumCoeff","MultiplexFlowSumDynamicCoeff"])
+    rk.PrintDifferences(g,"MultiplexFlowSumCoeff","MultiplexFlowSumDynamicCoeff")
+
+def timemeasures():
+    reloading()
+    g = root.addSubGraph(PubGraph)
+    g = g.addSubGraph(InducedConnexMaxGraph)
+    gf.SamplePartiallyConstructedSubGraphs(g,3000,27000,1000) #have to start at 3000 because otherwise shit.
+
+    
+    #first the statics
+    rk.MeasureTime_static(g, me.Degree_static,"TM_degreestatic")
+    rk.MeasureTime_static(g, me.MonoplexFlow_static,"TM_monoplexflowstatic")
+    """rk.MeasureTime_static(g, me.MultiplexFlowSum_static,"TM_mxflowsumstatic")
+    rk.MeasureTime_static(g, me.MultiplexFlowAggregated_static,"TM_mxflowaggstatic")
+    rk.MeasureTime_static(g, me.MultiplexFlowSelective_static,"TM_mxflowselstatic")"""
+
+    for k in [1,2,5,10,20]:
+        KMonoplexFlow_static = lambda g, depth = k, coeffname="FlowCoeff" : me.KMonoplexFlow_static(g,depth,coeffname)
+        #KMultiplexFlowAggregated_static = lambda g, depth = k, coeffname="MultiplexFlowAggregatedCoeff" : me.KMultiplexFlowAggregated_static(g,depth,coeffname)
+        rk.MeasureTime_static(g, KMonoplexFlow_static,"TM_"+str(k)+"monoplexflowstatic")
+        #rk.MeasureTime_static(g, KMultiplexFlowAggregated_static,"TM_"+str(k)+"mxflowaggstatic")
+
+    
+    #now the addnodes
+    rk.MeasureTime_addNode(g, me.Degree_static, me.Degree_addNode, "TM_degreeaddnode")
+    rk.MeasureTime_addNode(g, me.MonoplexFlow_static,me.MonoplexFlow_addNode,"TM_monoplexflowaddnode")
+    """rk.MeasureTime_addNode(g, me.MultiplexFlowSum_static,me.MultiplexFlowSum_addNode,"TM_mxflowsumaddnode")
+    rk.MeasureTime_addNode(g, me.MultiplexFlowAggregated_static,me.MultiplexFlowAggregated_addNode,"TM_mxflowaggaddnode")
+    rk.MeasureTime_addNode(g, me.MultiplexFlowSelective_static,me.MultiplexFlowSelective_addNode,"TM_mxflowseladdnode")"""
+    
+    for k in [1,2,5,10,20]:
+        KMonoplexFlow_static = lambda g, depth = k, coeffname="FlowCoeff" : me.KMonoplexFlow_static(g,depth,coeffname)
+        #KMultiplexFlowAggregated_static = lambda g, depth = k, coeffname="MultiplexFlowAggregatedCoeff" : me.KMultiplexFlowAggregated_static(g,depth,coeffname)
+        KMonoplexFlow_addNode = lambda g, node, depth = k, coeffname="FlowCoeff" : me.MonoplexFlow_addNode(g,node,depth,coeffname)
+        #KMultiplexFlowAggregated_addNode = lambda g, node, depth = k, coeffname="MultiplexFlowAggregatedCoeff" : me.MultiplexFlowAggregated_addNode(g,node,depth,coeffname)
+        rk.MeasureTime_addNode(g, KMonoplexFlow_static, KMonoplexFlow_addNode,"TM_"+str(k)+"monoplexflowaddnode")
+        #rk.MeasureTime_addNode(g, KMultiplexFlowAggregated_static, KMultiplexFlowAggregated_addNode,"TM_"+str(k)+"mxflowaggaddnode")
+
+
+    #now the dynamics, threshold = 60 seconds
+    rk.MeasureTime_dynamic(g, me.Degree_addNode,"TM_degreedynamic",threshold=10.0)
+    rk.MeasureTime_dynamic(g, me.MonoplexFlow_addNode,"TM_monoplexflowdynamic",threshold=10.0)
+    """rk.MeasureTime_dynamic(g, me.MultiplexFlowSum_addNode,"TM_mxflowsumdynamic",threshold=60.0)
+    rk.MeasureTime_dynamic(g, me.MultiplexFlowAggregated_addNode,"TM_mxflowaggdynamic",threshold=60.0)
+    rk.MeasureTime_dynamic(g, me.MultiplexFlowSelective_addNode,"TM_mxflowseldynamic",threshold=60.0)"""
+
+    for k in [1,2,5,10,20]:
+        KMonoplexFlow_addNode = lambda g, node, depth = k, coeffname="FlowCoeff" : me.MonoplexFlow_addNode(g,node,depth,coeffname)
+        #KMultiplexFlowAggregated_addNode = lambda g, node, depth = k, coeffname="MultiplexFlowAggregatedCoeff" : me.MultiplexFlowAggregated_addNode(g,node,depth,coeffname)
+        rk.MeasureTime_dynamic(g, KMonoplexFlow_addNode,"TM_"+str(k)+"monoplexflowdynamic",threshold=10.0)
+        #rk.MeasureTime_dynamic(g, KMultiplexFlowAggregated_addNode,"TM_"+str(k)+"mxflowaggdynamic",threshold=60.0)"""
+
+    
+   
+    
+def totalcorrelationmeasures(): 
+    reloading()
+    g = root.addSubGraph(PubGraph)
+    g = g.addSubGraph(InducedConnexMaxGraph)
+    g = g.addSubGraph(MultiplexGraph)
+
+    me.HIndexPub_static(g)
+    me.ExForce_static(g)
+
+    me.Degree_static(g, coeffname = "1DegreeCoeff")
+    me.DagDepth_static(g)
+    me.KDegree_static(g, coeffname = "InfDegreeCoeff")
+    
+    
+    me.MonoplexFlow_static(g)
+    me.MonoplexFlowUnbounded_static(g)
+    
+    me.MultiplexFlowAggregated_static(g)
+    me.MultiplexFlowAggregatedUnbounded_static(g)
+    me.MultiplexFlowSum_static(g)
+    me.MultiplexFlowSumUnbounded_static(g)
+    me.MultiplexFlowSelective_static(g)
+    me.MultiplexFlowSelectiveUnbounded_static(g)
+
+    for k in [2,5,10,20]:
+        me.KDegree_static(g, depth = k, coeffname = str(k)+"DegreeCoeff")
+    for k in [1,2,5,10,20]:
+        me.KMonoplexFlow_static(g, depth = k, coeffname = str(k)+"FlowCoeff")
+        me.KMonoplexFlowUnbounded_static(g, depth=k, coeffname = str(k)+"FlowUnboundedCoeff")
+        me.KMultiplexFlowAggregated_static(g, depth = k, coeffname = str(k)+"MultiplexFlowAggregatedCoeff")
+        me.KMultiplexFlowAggregatedUnbounded_static(g, depth=k, coeffname = str(k)+"MultiplexFlowAggregatedUnboundedCoeff")
+        
+    for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]:
+        me.AlphaMonoplexFlow_static(g,a)
+        me.AlphaMonoplexFlowUnbounded_static(g,a)
+        me.AlphaMultiplexFlowAggregated_static(g,a)
+        me.AlphaMultiplexFlowAggregatedUnbounded_static(g,a)
+
+    tlp.saveGraph(g.graph,"bestgraph.tlp")
+
+    #set the list of names
+    
+    names = ["FlowCoeff","FlowUnboundedCoeff","MultiplexFlowSumCoeff","MultiplexFlowSumUnboundedCoeff","MultiplexFlowAggregatedCoeff","MultiplexFlowAggregatedUnboundedCoeff","MultiplexFlowSelectiveCoeff","MultiplexFlowSelectiveUnboundedCoeff","HIndexPubCoeff","ExForceCoeff","DagDepthCoeff","InfDegreeCoeff"]
+
+    names+= [str(k)+"DegreeCoeff" for k in [1,2,5,10,20]]
+    names+= [str(k)+"FlowCoeff" for k in [1,2,5,10,20]]
+    names+= [str(k)+"FlowUnboundedCoeff" for k in [1,2,5,10,20]]
+    names+= [str(k)+"MultiplexFlowAggregatedCoeff" for k in [1,2,5,10,20]]
+    names+= [str(k)+"MultiplexFlowAggregatedUnboundedCoeff" for k in [1,2,5,10,20]]
+
+    names+= [str(a)+"FlowCoeff" for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]]
+    names+= [str(a)+"FlowUnboundedCoeff" for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]]
+    names+= [str(a)+"FlowAggregatedCoeff" for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]]
+    names+= [str(a)+"FlowAggregatedUnboundedCoeff" for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]]
+
+    #export the pub coeffs
+    #only use spearman coeffs
+    rk.ExportCoeffs_ordered(g,names,"coeffspubs")
+
+    #now transfer this to an author graph and export all the coeffs
+    gaut = root[1][2].addSubGraph(AuthorGraph)
+    #hindex
+    me.HIndex_static(gaut)
+    gf.PubCoeffsToAuthorCoeffs(g,gaut,names,ReductionFunc = gf.PTASum)
+    gf.PubCoeffsToAuthorCoeffs(g,gaut,names,ReductionFunc = gf.PTASumPA)
+    gf.PubCoeffsToAuthorCoeffs(g,gaut,names,ReductionFunc = gf.PTAAverage)
+    gf.PubCoeffsToAuthorCoeffs(g,gaut,names,ReductionFunc = gf.PTAAveragePA)
+
+    #still use only spearman
+    autnames = [n+"PTASum" for n in names]+[n+"PTASumPA" for n in names]+[n+"PTAAverage" for n in names]+[n+"PTAAveragePA" for n in names]
+    rk.ExportCoeffs_ordered(gaut,autnames,"coeffsauts")
+    
+
 
 def rapportCitationGraph():
     reloading()

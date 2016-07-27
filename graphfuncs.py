@@ -123,7 +123,7 @@ def SelectDag(g, node, depth = float('inf'), direction = "direct"):
         getDirectNodes = g.graph.getOutNodes 
 
     if depth==1:
-        sons = set(get_out_nodes(node))
+        sons = set(GetSons(g,node,direction))
         return sons
 
     node_list = []
@@ -472,6 +472,7 @@ def SamplePartiallyConstructedSubGraphs(g, minnodes, maxnodes, step):
     numnodes = minnodes
     order = GetConstructionOrder(g)
     
+    
     while numnodes < maxnodes:
         g.addSubGraph(PartiallyConstructedGraph, numnodes = numnodes, order = order)
         numnodes+=step
@@ -484,7 +485,7 @@ def SamplePartiallyConstructedMultiplexSubGraphs(g, minnodes, maxnodes, step):
     while numnodes < maxnodes:
         gr = g.addSubGraph(PartiallyConstructedGraph, numnodes = numnodes, order = order)
         grr = gr.addSubGraph(MultiplexGraph)
-        gr.ReplaceWithSubGraph(grr) 
+        gr.ReplaceWithSubGraph(grr)
         numnodes+=step
         print numnodes
             
@@ -565,3 +566,37 @@ def PubCoeffsToAuthorCoeffs(g, gaut, names, ReductionFunc = PTASumPA):
         for n in autcoeff:
             authorcoeff[n] = autcoeff[n]
         
+
+
+"""#####Function to update multiplex info of a graph after adding a node
+def UpdateMultiplex_addNode(g, n, depth = 1): 
+    shared_cited_by = self.graph.getIntegerVectorProperty("sharedCitedBy") #on each edge indicates the papers which cites both nodes of the edge
+    shared_cited_length = self.graph.getIntegerProperty("sharedCitedLength")
+
+    node_id = self.graph["node_property"]
+        
+    
+    gr = g.addSubGraph(EmptyGraph, name="mx"+node_id[n])
+    gr.graph.addNode(n)
+    
+    sons = GetSons(g,n,direction = "direct")
+
+    for s in sons:
+        
+            
+            for e in gr.graph.getEdges():
+                shared_cited_by[e]+=[n.id]
+                shared_cited_length[e]+=1
+
+            for m in gr.graph.getNodes():
+                shared_cited_by[m] += [n.id]
+                shared_cited_length[m]+=1
+            k+=1
+            print k
+
+        print "graphs built"
+
+
+###Build multiplex graph dynamically
+def MultiplexDynamically(g):"""
+    
