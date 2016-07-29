@@ -140,10 +140,10 @@ Faire le alpha Monoplex Flow. Tester les correlations
 """
 
 
-def test():
+def testtot():
     reloading()
-    g = root.addSubGraph(PubGraph)
-    
+    totalcorrelationmeasures()
+    timemeasures()
 
 
 def alphatest():
@@ -217,8 +217,8 @@ def timemeasures():
 
 
     #now the dynamics, threshold = 60 seconds
-    rk.MeasureTime_dynamic(g, me.Degree_addNode,"TM_degreedynamic",threshold=10.0)
-    rk.MeasureTime_dynamic(g, me.MonoplexFlow_addNode,"TM_monoplexflowdynamic",threshold=10.0)
+    rk.MeasureTime_dynamic(g, me.Degree_addNode,"TM_degreedynamic",threshold=60.0)
+    rk.MeasureTime_dynamic(g, me.MonoplexFlow_addNode,"TM_monoplexflowdynamic",threshold=60.0)
     """rk.MeasureTime_dynamic(g, me.MultiplexFlowSum_addNode,"TM_mxflowsumdynamic",threshold=60.0)
     rk.MeasureTime_dynamic(g, me.MultiplexFlowAggregated_addNode,"TM_mxflowaggdynamic",threshold=60.0)
     rk.MeasureTime_dynamic(g, me.MultiplexFlowSelective_addNode,"TM_mxflowseldynamic",threshold=60.0)"""
@@ -226,7 +226,7 @@ def timemeasures():
     for k in [1,2,5,10,20]:
         KMonoplexFlow_addNode = lambda g, node, depth = k, coeffname="FlowCoeff" : me.MonoplexFlow_addNode(g,node,depth,coeffname)
         #KMultiplexFlowAggregated_addNode = lambda g, node, depth = k, coeffname="MultiplexFlowAggregatedCoeff" : me.MultiplexFlowAggregated_addNode(g,node,depth,coeffname)
-        rk.MeasureTime_dynamic(g, KMonoplexFlow_addNode,"TM_"+str(k)+"monoplexflowdynamic",threshold=10.0)
+        rk.MeasureTime_dynamic(g, KMonoplexFlow_addNode,"TM_"+str(k)+"monoplexflowdynamic",threshold=60.0)
         #rk.MeasureTime_dynamic(g, KMultiplexFlowAggregated_addNode,"TM_"+str(k)+"mxflowaggdynamic",threshold=60.0)"""
 
     
@@ -234,7 +234,7 @@ def timemeasures():
     
 def totalcorrelationmeasures(): 
     reloading()
-    g = root.addSubGraph(PubGraph)
+    """g = root.addSubGraph(PubGraph)
     g = g.addSubGraph(InducedConnexMaxGraph)
     g = g.addSubGraph(MultiplexGraph)
 
@@ -270,9 +270,10 @@ def totalcorrelationmeasures():
         me.AlphaMultiplexFlowAggregated_static(g,a)
         me.AlphaMultiplexFlowAggregatedUnbounded_static(g,a)
 
-    tlp.saveGraph(g.graph,"bestgraph.tlp")
+    tlp.saveGraph(g.graph,"bestgraph.tlp")"""
 
     #set the list of names
+    g=root[1][2][3]
     
     names = ["FlowCoeff","FlowUnboundedCoeff","MultiplexFlowSumCoeff","MultiplexFlowSumUnboundedCoeff","MultiplexFlowAggregatedCoeff","MultiplexFlowAggregatedUnboundedCoeff","MultiplexFlowSelectiveCoeff","MultiplexFlowSelectiveUnboundedCoeff","HIndexPubCoeff","ExForceCoeff","DagDepthCoeff","InfDegreeCoeff"]
 
@@ -284,8 +285,8 @@ def totalcorrelationmeasures():
 
     names+= [str(a)+"FlowCoeff" for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]]
     names+= [str(a)+"FlowUnboundedCoeff" for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]]
-    names+= [str(a)+"FlowAggregatedCoeff" for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]]
-    names+= [str(a)+"FlowAggregatedUnboundedCoeff" for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]]
+    names+= [str(a)+"MultiplexFlowAggregatedCoeff" for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]]
+    names+= [str(a)+"MultiplexFlowAggregatedUnboundedCoeff" for a in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]]
 
     #export the pub coeffs
     #only use spearman coeffs
