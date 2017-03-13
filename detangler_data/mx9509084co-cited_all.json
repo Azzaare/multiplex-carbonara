@@ -1,0 +1,592 @@
+{
+ "layers": {
+  "111256": {
+   "mxaggregated": 4.48489, 
+   "citations": 18.0, 
+   "date": 730817, 
+   "name": "111256", 
+   "authors": "t. imai,k. -i. kondo,t. murakami,t. shinohara", 
+   "mxselective": 3.32253, 
+   "hindex": 5, 
+   "title": "Renormalizing a BRST-invariant composite operator of mass dimension 2 in", 
+   "flow": 2.96239, 
+   "mxsum": 3.78273
+  }, 
+  "9510167": {
+   "mxaggregated": 7.56221, 
+   "citations": 17.0, 
+   "date": 728589, 
+   "name": "9510167", 
+   "authors": "andrew waldron,peter van nieuwenhuizen,jan de boer,kostas skenderis", 
+   "mxselective": 3.89892, 
+   "hindex": 6, 
+   "title": "On the renormalizability and unitarity of the Curci-Ferrari model for", 
+   "flow": 6.69211, 
+   "mxsum": 3.16335
+  }, 
+  "204211": {
+   "mxaggregated": 1.26418, 
+   "citations": 2.0, 
+   "date": 730964, 
+   "name": "204211", 
+   "authors": "k. stepanyantz,e. andriyash", 
+   "mxselective": 1.21662, 
+   "hindex": 2, 
+   "title": "One-loop renormalization of the Yang-Mills theory with BRST-invariant", 
+   "flow": 1.26393, 
+   "mxsum": 1.28766
+  }, 
+  "206111": {
+   "mxaggregated": 1.68687, 
+   "citations": 4.0, 
+   "date": 731014, 
+   "name": "206111", 
+   "authors": "r. e. browne,j. a. gracey", 
+   "mxselective": 1.64363, 
+   "hindex": 3, 
+   "title": "The Curci-Ferrari model with massive quarks at two loops", 
+   "flow": 1.56577, 
+   "mxsum": 1.63511
+  }, 
+  "105018": {
+   "mxaggregated": 1.77683, 
+   "citations": 18.0, 
+   "date": 730607, 
+   "name": "105018", 
+   "authors": "k. knecht,k. van acoleyen,m. vanderkelen,henri verschelde", 
+   "mxselective": 3.18169, 
+   "hindex": 6, 
+   "title": "The non-perturbative groundstate of Q.C.D and the local composite", 
+   "flow": 3.08128, 
+   "mxsum": 2.21767
+  }, 
+  "4158": {
+   "mxaggregated": 8.36236, 
+   "citations": 33.0, 
+   "date": 730234, 
+   "name": "4158", 
+   "authors": "k. -i. kondo,t. shinohara", 
+   "mxselective": 6.13581, 
+   "hindex": 8, 
+   "title": "Abelian dominance in low-energy Gluodynamics due to dynamical mass", 
+   "flow": 5.06279, 
+   "mxsum": 6.0243
+  }, 
+  "112014": {
+   "mxaggregated": 1.83831, 
+   "citations": 5.0, 
+   "date": 730822, 
+   "name": "112014", 
+   "authors": "j. a. gracey", 
+   "mxselective": 1.42734, 
+   "hindex": 3, 
+   "title": "Two loop MSbar renormalization of the Curci-Ferrari model", 
+   "flow": 1.47214, 
+   "mxsum": 1.69124
+  }, 
+  "9511176": {
+   "mxaggregated": 4.32374, 
+   "citations": 13.0, 
+   "date": 728621, 
+   "name": "9511176", 
+   "authors": "tobias hurth", 
+   "mxselective": 2.5843, 
+   "hindex": 5, 
+   "title": "Higgs-free Massive Nonabelian Gauge Theories", 
+   "flow": 3.3124, 
+   "mxsum": 2.8754
+  }, 
+  "9909011": {
+   "mxaggregated": 5.34196, 
+   "citations": 33.0, 
+   "date": 729999, 
+   "name": "9909011", 
+   "authors": "martin schaden", 
+   "mxselective": 6.71423, 
+   "hindex": 9, 
+   "title": "Mass Generation in Continuum SU(2) Gauge Theory in Covariant Abelian", 
+   "flow": 6.92216, 
+   "mxsum": 3.99383
+  }, 
+  "9509084": {
+   "mxaggregated": 12.9403, 
+   "citations": 10.0, 
+   "date": 728550, 
+   "name": "9509084", 
+   "authors": "vipul periwal", 
+   "mxselective": 4.39085, 
+   "hindex": 6, 
+   "title": "Infrared regularization of non-Abelian gauge theories", 
+   "flow": 15.8344, 
+   "mxsum": 2.70825
+  }, 
+  "211144": {
+   "mxaggregated": 2.13265, 
+   "citations": 6.0, 
+   "date": 731169, 
+   "name": "211144", 
+   "authors": "j. a. gracey", 
+   "mxselective": 1.69451, 
+   "hindex": 2, 
+   "title": "Three loop MSbar renormalization of the Curci-Ferrari model and the", 
+   "flow": 1.61925, 
+   "mxsum": 2.00963
+  }, 
+  "108034": {
+   "mxaggregated": 2.58568, 
+   "citations": 12.0, 
+   "date": 730704, 
+   "name": "108034", 
+   "authors": "martin schaden", 
+   "mxselective": 2.15855, 
+   "hindex": 5, 
+   "title": "Mass Generation, Ghost Condensation and Broken Symmetry: SU(2) in", 
+   "flow": 2.03504, 
+   "mxsum": 2.34629
+  }, 
+  "9511068": {
+   "mxaggregated": 6.17732, 
+   "citations": 13.0, 
+   "date": 728607, 
+   "name": "9511068", 
+   "authors": "nicola maggiore,alberto blasi", 
+   "mxselective": 3.29718, 
+   "hindex": 6, 
+   "title": "Infrared Regularization of Yang-Mills Theories", 
+   "flow": 6.04877, 
+   "mxsum": 3.02499
+  }, 
+  "105299": {
+   "mxaggregated": 6.22821, 
+   "citations": 26.0, 
+   "date": 730635, 
+   "name": "105299", 
+   "authors": "kei-ichi kondo", 
+   "mxselective": 5.42535, 
+   "hindex": 6, 
+   "title": "Vacuum condensate of mass dimension 2 as the origin of mass gap and", 
+   "flow": 4.3615, 
+   "mxsum": 5.31266
+  }, 
+  "205057": {
+   "mxaggregated": 1.36518, 
+   "citations": 5.0, 
+   "date": 730977, 
+   "name": "205057", 
+   "authors": "n. wschebor,ulrich ellwanger", 
+   "mxselective": 1.26185, 
+   "hindex": 2, 
+   "title": "Massive Yang-Mills Theory in Abelian Gauges", 
+   "flow": 1.26265, 
+   "mxsum": 1.37006
+  }
+ }, 
+ "nodes": [
+  {
+   "descriptors": "9510167;9509084", 
+   "hindex": 6, 
+   "y": -2.072289228439331, 
+   "authors": "andrew waldron,peter van nieuwenhuizen,jan de boer,kostas skenderis", 
+   "date": 728589, 
+   "id": 10857, 
+   "limitedToSubgraph": "9510167;9509084", 
+   "title": "On the renormalizability and unitarity of the Curci-Ferrari model for", 
+   "mxselective": 3.89892, 
+   "flow": 6.69211, 
+   "label": "9510167", 
+   "citations": 17.0, 
+   "mxsum": 3.16335, 
+   "mxaggregated": 7.56221, 
+   "x": -44.0
+  }, 
+  {
+   "descriptors": "9510167;9511068;9509084;9511176", 
+   "hindex": 5, 
+   "y": 18.650602340698242, 
+   "authors": "tobias hurth", 
+   "date": 728621, 
+   "id": 14586, 
+   "limitedToSubgraph": "9510167;9511068;9509084;9511176", 
+   "title": "Higgs-free Massive Nonabelian Gauge Theories", 
+   "mxselective": 2.5843, 
+   "flow": 3.3124, 
+   "label": "9511176", 
+   "citations": 13.0, 
+   "mxsum": 2.8754, 
+   "mxaggregated": 4.32374, 
+   "x": -42.0
+  }, 
+  {
+   "descriptors": "9510167;105018;9511176;112014;9509084;9511068;105299", 
+   "hindex": 3, 
+   "y": 2.072289228439331, 
+   "authors": "j. a. gracey", 
+   "date": 730822, 
+   "id": 25850, 
+   "limitedToSubgraph": "9510167;9511176;112014;9509084;9511068", 
+   "title": "Two loop MSbar renormalization of the Curci-Ferrari model", 
+   "mxselective": 1.42734, 
+   "flow": 1.47214, 
+   "label": "112014", 
+   "citations": 5.0, 
+   "mxsum": 1.69124, 
+   "mxaggregated": 1.83831, 
+   "x": -60.0
+  }, 
+  {
+   "descriptors": "9510167;9509084", 
+   "hindex": 3, 
+   "y": 8.289156913757324, 
+   "authors": "adel khoudeir", 
+   "date": 728791, 
+   "id": 8405, 
+   "limitedToSubgraph": "9510167;9509084", 
+   "title": "Non-Abelian Antisymmetric-Vector Coupling from Self-Interaction", 
+   "mxselective": 2.50829, 
+   "flow": 2.72285, 
+   "label": "9605080", 
+   "citations": 7.0, 
+   "mxsum": 2.63583, 
+   "mxaggregated": 3.43319, 
+   "x": -31.0
+  }, 
+  {
+   "descriptors": "9509084", 
+   "hindex": 0, 
+   "y": -19.686748504638672, 
+   "authors": "marti ruiz-altaba,henri ruegg", 
+   "date": 731334, 
+   "id": 10298, 
+   "limitedToSubgraph": "9509084", 
+   "title": "The Stueckelberg Field", 
+   "mxselective": 1.0, 
+   "flow": 1.0, 
+   "label": "304245", 
+   "citations": 0.0, 
+   "mxsum": 1.0, 
+   "mxaggregated": 1.0, 
+   "x": -37.0
+  }, 
+  {
+   "descriptors": "9510167;111256;105018;4158;9511176;112014;9909011;9509084;211144;108034;9511068;105299;205057", 
+   "hindex": 0, 
+   "y": -9.325301170349121, 
+   "authors": "k. -i. kondo", 
+   "date": 731302, 
+   "id": 9936, 
+   "limitedToSubgraph": "9510167;9511176;112014;9509084;211144;9511068", 
+   "title": "Implications of Analyticity to Mass Gap, Color Confinement and Infrared", 
+   "mxselective": 1.04545, 
+   "flow": 1.04545, 
+   "label": "303251", 
+   "citations": 1.0, 
+   "mxsum": 1.12301, 
+   "mxaggregated": 1.08511, 
+   "x": -52.0
+  }, 
+  {
+   "descriptors": "9509084", 
+   "hindex": 6, 
+   "y": 1.0361446142196655, 
+   "authors": "vipul periwal", 
+   "date": 728550, 
+   "id": 13347, 
+   "limitedToSubgraph": "9509084", 
+   "title": "Infrared regularization of non-Abelian gauge theories", 
+   "mxselective": 4.39085, 
+   "flow": 15.8344, 
+   "label": "9509084", 
+   "citations": 10.0, 
+   "mxsum": 2.70825, 
+   "mxaggregated": 12.9403, 
+   "x": -43.0
+  }, 
+  {
+   "descriptors": "9509084", 
+   "hindex": 30, 
+   "y": 2.072289228439331, 
+   "authors": "edward witten", 
+   "date": 728961, 
+   "id": 10179, 
+   "limitedToSubgraph": "9509084", 
+   "title": "Five-Brane Effective Action In M-Theory", 
+   "mxselective": 19.3657, 
+   "flow": 38.1483, 
+   "label": "9610234", 
+   "citations": 151.0, 
+   "mxsum": 12.2501, 
+   "mxaggregated": 29.2913, 
+   "x": -7.0
+  }, 
+  {
+   "descriptors": "111256;9510167;204211;206111;105018;4158;112014;9511176;9909011;9509084;211144;108034;9511068;105299;205057", 
+   "hindex": 2, 
+   "y": -0.0, 
+   "authors": "j. a. gracey", 
+   "date": 731169, 
+   "id": 17704, 
+   "limitedToSubgraph": "9510167;206111;9511176;112014;9509084;211144;9511068", 
+   "title": "Three loop MSbar renormalization of the Curci-Ferrari model and the", 
+   "mxselective": 1.69451, 
+   "flow": 1.61925, 
+   "label": "211144", 
+   "citations": 6.0, 
+   "mxsum": 2.00963, 
+   "mxaggregated": 2.13265, 
+   "x": -63.0
+  }, 
+  {
+   "descriptors": "9510167;9511068;9509084", 
+   "hindex": 6, 
+   "y": -4.144578456878662, 
+   "authors": "nicola maggiore,alberto blasi", 
+   "date": 728607, 
+   "id": 14482, 
+   "limitedToSubgraph": "9510167;9511068;9509084", 
+   "title": "Infrared Regularization of Yang-Mills Theories", 
+   "mxselective": 3.29718, 
+   "flow": 6.04877, 
+   "label": "9511068", 
+   "citations": 13.0, 
+   "mxsum": 3.02499, 
+   "mxaggregated": 6.17732, 
+   "x": -49.0
+  }, 
+  {
+   "descriptors": "9510167;111256;204211;206111;105018;9511176;112014;9509084;9511068;105299", 
+   "hindex": 3, 
+   "y": 2.072289228439331, 
+   "authors": "r. e. browne,j. a. gracey", 
+   "date": 731014, 
+   "id": 15255, 
+   "limitedToSubgraph": "9510167;206111;9511176;112014;9509084;9511068", 
+   "title": "The Curci-Ferrari model with massive quarks at two loops", 
+   "mxselective": 1.64363, 
+   "flow": 1.56577, 
+   "label": "206111", 
+   "citations": 4.0, 
+   "mxsum": 1.63511, 
+   "mxaggregated": 1.68687, 
+   "x": -60.0
+  }
+ ], 
+ "links": [
+  {
+   "source": 15255, 
+   "limitedToSubgraph": "9510167;9511068;9509084;9511176", 
+   "id": 185697, 
+   "descriptors": "9510167;9511068;9509084;9511176", 
+   "target": 14586
+  }, 
+  {
+   "source": 10179, 
+   "limitedToSubgraph": "9509084", 
+   "id": 120510, 
+   "descriptors": "9509084", 
+   "target": 13347
+  }, 
+  {
+   "source": 14586, 
+   "limitedToSubgraph": "9509084", 
+   "id": 174655, 
+   "descriptors": "9509084", 
+   "target": 13347
+  }, 
+  {
+   "source": 14586, 
+   "limitedToSubgraph": "9510167;9509084", 
+   "id": 174656, 
+   "descriptors": "9510167;9509084", 
+   "target": 10857
+  }, 
+  {
+   "source": 14586, 
+   "limitedToSubgraph": "9510167;9511068;9509084", 
+   "id": 174657, 
+   "descriptors": "9510167;9511068;9509084", 
+   "target": 14482
+  }, 
+  {
+   "source": 10298, 
+   "limitedToSubgraph": "9509084", 
+   "id": 122675, 
+   "descriptors": "9509084", 
+   "target": 13347
+  }, 
+  {
+   "source": 9936, 
+   "limitedToSubgraph": "9510167;112014;9511068;9509084;9511176", 
+   "id": 117036, 
+   "descriptors": "9510167;105018;9511176;112014;9509084;9511068;105299", 
+   "target": 25850
+  }, 
+  {
+   "source": 17704, 
+   "limitedToSubgraph": "9510167;112014;9511068;9509084;9511176", 
+   "id": 228572, 
+   "descriptors": "9510167;105018;9511176;112014;9509084;9511068;105299", 
+   "target": 25850
+  }, 
+  {
+   "source": 9936, 
+   "limitedToSubgraph": "9510167;9511176;112014;9509084;211144;9511068", 
+   "id": 117041, 
+   "descriptors": "111256;9510167;105018;4158;112014;9511176;9909011;9509084;211144;108034;9511068;105299;205057", 
+   "target": 17704
+  }, 
+  {
+   "source": 14482, 
+   "limitedToSubgraph": "9509084", 
+   "id": 173724, 
+   "descriptors": "9509084", 
+   "target": 13347
+  }, 
+  {
+   "source": 14482, 
+   "limitedToSubgraph": "9510167;9509084", 
+   "id": 173725, 
+   "descriptors": "9510167;9509084", 
+   "target": 10857
+  }, 
+  {
+   "source": 17704, 
+   "limitedToSubgraph": "9510167;206111;9511176;112014;9509084;9511068", 
+   "id": 228575, 
+   "descriptors": "111256;9510167;204211;206111;105018;112014;9511176;9509084;9511068;105299", 
+   "target": 15255
+  }, 
+  {
+   "source": 9936, 
+   "limitedToSubgraph": "9509084", 
+   "id": 117047, 
+   "descriptors": "9509084", 
+   "target": 13347
+  }, 
+  {
+   "source": 9936, 
+   "limitedToSubgraph": "9510167;9509084", 
+   "id": 117048, 
+   "descriptors": "9510167;9509084", 
+   "target": 10857
+  }, 
+  {
+   "source": 17704, 
+   "limitedToSubgraph": "9509084", 
+   "id": 228580, 
+   "descriptors": "9509084", 
+   "target": 13347
+  }, 
+  {
+   "source": 17704, 
+   "limitedToSubgraph": "9510167;9509084", 
+   "id": 228581, 
+   "descriptors": "9510167;9509084", 
+   "target": 10857
+  }, 
+  {
+   "source": 17704, 
+   "limitedToSubgraph": "9510167;9511068;9509084", 
+   "id": 228582, 
+   "descriptors": "9510167;9511068;9509084", 
+   "target": 14482
+  }, 
+  {
+   "source": 9936, 
+   "limitedToSubgraph": "9510167;9511068;9509084", 
+   "id": 117051, 
+   "descriptors": "9510167;9511068;9509084", 
+   "target": 14482
+  }, 
+  {
+   "source": 8405, 
+   "limitedToSubgraph": "9509084", 
+   "id": 97876, 
+   "descriptors": "9509084", 
+   "target": 13347
+  }, 
+  {
+   "source": 17704, 
+   "limitedToSubgraph": "9510167;9511068;9509084;9511176", 
+   "id": 228583, 
+   "descriptors": "9510167;9511068;9509084;9511176", 
+   "target": 14586
+  }, 
+  {
+   "source": 9936, 
+   "limitedToSubgraph": "9510167;9511068;9509084;9511176", 
+   "id": 117052, 
+   "descriptors": "9510167;9511068;9509084;9511176", 
+   "target": 14586
+  }, 
+  {
+   "source": 8405, 
+   "limitedToSubgraph": "9510167;9509084", 
+   "id": 97877, 
+   "descriptors": "9510167;9509084", 
+   "target": 10857
+  }, 
+  {
+   "source": 25850, 
+   "limitedToSubgraph": "9509084", 
+   "id": 336785, 
+   "descriptors": "9509084", 
+   "target": 13347
+  }, 
+  {
+   "source": 25850, 
+   "limitedToSubgraph": "9510167;9509084", 
+   "id": 336786, 
+   "descriptors": "9510167;9509084", 
+   "target": 10857
+  }, 
+  {
+   "source": 25850, 
+   "limitedToSubgraph": "9510167;9511068;9509084", 
+   "id": 336787, 
+   "descriptors": "9510167;9511068;9509084", 
+   "target": 14482
+  }, 
+  {
+   "source": 25850, 
+   "limitedToSubgraph": "9510167;9511068;9509084;9511176", 
+   "id": 336788, 
+   "descriptors": "9510167;9511068;9509084;9511176", 
+   "target": 14586
+  }, 
+  {
+   "source": 10857, 
+   "limitedToSubgraph": "9509084", 
+   "id": 129709, 
+   "descriptors": "9509084", 
+   "target": 13347
+  }, 
+  {
+   "source": 15255, 
+   "limitedToSubgraph": "9510167;112014;9511068;9509084;9511176", 
+   "id": 185692, 
+   "descriptors": "9510167;105018;9511176;112014;9509084;9511068;105299", 
+   "target": 25850
+  }, 
+  {
+   "source": 15255, 
+   "limitedToSubgraph": "9509084", 
+   "id": 185694, 
+   "descriptors": "9509084", 
+   "target": 13347
+  }, 
+  {
+   "source": 15255, 
+   "limitedToSubgraph": "9510167;9509084", 
+   "id": 185695, 
+   "descriptors": "9510167;9509084", 
+   "target": 10857
+  }, 
+  {
+   "source": 15255, 
+   "limitedToSubgraph": "9510167;9511068;9509084", 
+   "id": 185696, 
+   "descriptors": "9510167;9511068;9509084", 
+   "target": 14482
+  }
+ ]
+}

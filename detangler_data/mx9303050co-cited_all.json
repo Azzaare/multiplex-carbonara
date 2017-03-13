@@ -1,0 +1,633 @@
+{
+ "layers": {
+  "9606143": {
+   "mxaggregated": 5.34609, 
+   "citations": 28.0, 
+   "date": 728832, 
+   "name": "9606143", 
+   "authors": "m. r. rahimi tabar,s. rouhani", 
+   "mxselective": 3.44741, 
+   "hindex": 12, 
+   "title": "A Logarithmic Conformal Field Theory Solution For Two Dimensional", 
+   "flow": 3.22996, 
+   "mxsum": 3.80968
+  }, 
+  "9508040": {
+   "mxaggregated": 2.31748, 
+   "citations": 4.0, 
+   "date": 728514, 
+   "name": "9508040", 
+   "authors": "l. moriconi", 
+   "mxselective": 1.37526, 
+   "hindex": 4, 
+   "title": "3-D Perturbations in Conformal Turbulence", 
+   "flow": 1.45225, 
+   "mxsum": 1.64421
+  }, 
+  "9212145": {
+   "mxaggregated": 17.1272, 
+   "citations": 24.0, 
+   "date": 727555, 
+   "name": "9212145", 
+   "authors": "a. m. polyakov", 
+   "mxselective": 10.0108, 
+   "hindex": 6, 
+   "title": "The Theory of Turbulence in Two Dimensions", 
+   "flow": 18.6404, 
+   "mxsum": 5.91052
+  }, 
+  "9303160": {
+   "mxaggregated": 25.8883, 
+   "citations": 117.0, 
+   "date": 727651, 
+   "name": "9303160", 
+   "authors": "v. gurarie", 
+   "mxselective": 22.9701, 
+   "hindex": 26, 
+   "title": "Logarithmic Operators in Conformal Field Theory", 
+   "flow": 30.9106, 
+   "mxsum": 8.47767
+  }, 
+  "9307180": {
+   "mxaggregated": 1.76216, 
+   "citations": 2.0, 
+   "date": 727773, 
+   "name": "9307180", 
+   "authors": "soonkeon nam,b. k. chung,h. j. shin,q-han park", 
+   "mxselective": 1.21532, 
+   "hindex": 2, 
+   "title": "Possible Tests of Conformal Turbulence through Boundaries", 
+   "flow": 1.23116, 
+   "mxsum": 1.44569
+  }, 
+  "9507166": {
+   "mxaggregated": 4.10487, 
+   "citations": 28.0, 
+   "date": 728503, 
+   "name": "9507166", 
+   "authors": "m. r. rahimi tabar,s. rouhani", 
+   "mxselective": 3.12301, 
+   "hindex": 13, 
+   "title": "The Alf'ven Effect and Conformal Field Theory", 
+   "flow": 3.77077, 
+   "mxsum": 2.8849
+  }, 
+  "9209046": {
+   "mxaggregated": 15.4702, 
+   "citations": 8.0, 
+   "date": 727455, 
+   "name": "9209046", 
+   "authors": "a. polyakov", 
+   "mxselective": 4.20672, 
+   "hindex": 5, 
+   "title": "Conformal Turbulence", 
+   "flow": 12.6618, 
+   "mxsum": 2.48567
+  }, 
+  "9212021": {
+   "mxaggregated": 8.25654, 
+   "citations": 14.0, 
+   "date": 727535, 
+   "name": "9212021", 
+   "authors": "z. yang,gabriele ferretti", 
+   "mxselective": 4.4055, 
+   "hindex": 6, 
+   "title": "Magnetic Fields and Passive Scalars in Polyakov's Conformal Turbulence", 
+   "flow": 5.81693, 
+   "mxsum": 3.51722
+  }, 
+  "9503005": {
+   "mxaggregated": 5.17571, 
+   "citations": 29.0, 
+   "date": 728353, 
+   "name": "9503005", 
+   "authors": "m. r. rahimitabar,s. rouhani", 
+   "mxselective": 4.14465, 
+   "hindex": 12, 
+   "title": "Turbulent Two Dimensional Magnetohydrodynamics and Conformal Field", 
+   "flow": 4.84903, 
+   "mxsum": 3.3326
+  }, 
+  "9512022": {
+   "mxaggregated": 3.31784, 
+   "citations": 6.0, 
+   "date": 728632, 
+   "name": "9512022", 
+   "authors": "steven thomas,omduth coceal", 
+   "mxselective": 1.91216, 
+   "hindex": 3, 
+   "title": "Conformal Models of Magnetohydrodynamic Turbulence", 
+   "flow": 1.94928, 
+   "mxsum": 2.3355
+  }, 
+  "9301030": {
+   "mxaggregated": 2.26069, 
+   "citations": 6.0, 
+   "date": 727574, 
+   "name": "9301030", 
+   "authors": "gregory falkovich,amihay hanany", 
+   "mxselective": 1.90696, 
+   "hindex": 4, 
+   "title": "Is 2d Turbulence a Conformal Turbulence?", 
+   "flow": 2.63202, 
+   "mxsum": 1.68341
+  }, 
+  "9310056": {
+   "mxaggregated": 2.04294, 
+   "citations": 4.0, 
+   "date": 727847, 
+   "name": "9310056", 
+   "authors": "h. cateau,makoto umeki,yutaka matsuo", 
+   "mxselective": 1.34213, 
+   "hindex": 4, 
+   "title": "Predictions on Two-dimensional Turbulence by Conformal Field Theory", 
+   "flow": 1.51653, 
+   "mxsum": 1.47585
+  }, 
+  "9307091": {
+   "mxaggregated": 2.83209, 
+   "citations": 4.0, 
+   "date": 727758, 
+   "name": "9307091", 
+   "authors": "soonkeon nam,b. k. chung,h. j. shin,q-han park", 
+   "mxselective": 1.59902, 
+   "hindex": 3, 
+   "title": "Solutions of Conformal Turbulence on a Half Plane", 
+   "flow": 1.54516, 
+   "mxsum": 2.06786
+  }, 
+  "9505111": {
+   "mxaggregated": 2.02662, 
+   "citations": 5.0, 
+   "date": 728431, 
+   "name": "9505111", 
+   "authors": "ph. brax", 
+   "mxselective": 1.39727, 
+   "hindex": 4, 
+   "title": "The Coulomb Gas Behaviour of Two Dimensional Turbulence", 
+   "flow": 1.78493, 
+   "mxsum": 1.46185
+  }, 
+  "9212019": {
+   "mxaggregated": 4.2077, 
+   "citations": 12.0, 
+   "date": 727534, 
+   "name": "9212019", 
+   "authors": "david a. lowe", 
+   "mxselective": 3.138, 
+   "hindex": 6, 
+   "title": "Conformal Models of Two-Dimensional Turbulence", 
+   "flow": 5.25056, 
+   "mxsum": 2.36985
+  }, 
+  "9212010": {
+   "mxaggregated": 10.1475, 
+   "citations": 10.0, 
+   "date": 727534, 
+   "name": "9212010", 
+   "authors": "yutaka matsuo", 
+   "mxselective": 3.5204, 
+   "hindex": 6, 
+   "title": "Some Additional Solutions of Conformal Turbulence", 
+   "flow": 7.11046, 
+   "mxsum": 2.71267
+  }, 
+  "9501021": {
+   "mxaggregated": 1.27074, 
+   "citations": 2.0, 
+   "date": 728299, 
+   "name": "9501021", 
+   "authors": "v. gurarie", 
+   "mxselective": 1.15019, 
+   "hindex": 2, 
+   "title": "Field Theory and the Phenomenon of Turbulence", 
+   "flow": 1.48877, 
+   "mxsum": 1.15516
+  }, 
+  "9212015": {
+   "mxaggregated": 2.66355, 
+   "citations": 8.0, 
+   "date": 727534, 
+   "name": "9212015", 
+   "authors": "gregory falkovich,amihay hanany", 
+   "mxselective": 2.16581, 
+   "hindex": 4, 
+   "title": "Spectra of Conformal Turbulence", 
+   "flow": 2.87407, 
+   "mxsum": 1.7846
+  }, 
+  "9303050": {
+   "mxaggregated": 8.68975, 
+   "citations": 10.0, 
+   "date": 727631, 
+   "name": "9303050", 
+   "authors": "soonkeon nam,b. k. chung,h. j. shin,q-han park", 
+   "mxselective": 3.37448, 
+   "hindex": 6, 
+   "title": "Conformal Turbulence with Boundary", 
+   "flow": 4.18018, 
+   "mxsum": 4.30644
+  }
+ }, 
+ "nodes": [
+  {
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9307091;9209046;9303050", 
+   "hindex": 3, 
+   "y": -64.240966796875, 
+   "authors": "soonkeon nam,b. k. chung,h. j. shin,q-han park", 
+   "date": 727758, 
+   "id": 121, 
+   "limitedToSubgraph": "9307091;9303050", 
+   "title": "Solutions of Conformal Turbulence on a Half Plane", 
+   "mxselective": 1.59902, 
+   "flow": 1.54516, 
+   "label": "9307091", 
+   "citations": 4.0, 
+   "mxsum": 2.06786, 
+   "mxaggregated": 2.83209, 
+   "x": 9.0
+  }, 
+  {
+   "descriptors": "9212010;9508040;9212145;9212015;9212019;9212021;9503005;9512022;9606143;9301030;9307180;9307091;9303050;9507166;9501021;9310056;9505111", 
+   "hindex": 3, 
+   "y": -46.62650680541992, 
+   "authors": "d. v. antonov", 
+   "date": 728992, 
+   "id": 10572, 
+   "limitedToSubgraph": "9606143;9508040;9307180;9507166;9307091;9503005;9512022;9310056;9303050", 
+   "title": "A Solution of the Cauchy Problem for the Loop Equation in Turbulence", 
+   "mxselective": 1.76536, 
+   "flow": 2.09386, 
+   "label": "9612005", 
+   "citations": 6.0, 
+   "mxsum": 1.90804, 
+   "mxaggregated": 2.35203, 
+   "x": -4.0
+  }, 
+  {
+   "descriptors": "9606143;9303050;9303160", 
+   "hindex": 6, 
+   "y": -27.97590446472168, 
+   "authors": "s. moghimi-araghi,s. rouhani", 
+   "date": 730167, 
+   "id": 760, 
+   "limitedToSubgraph": "9606143;9303050", 
+   "title": "Logarithmic Conformal Field Theories Near a Boundary", 
+   "mxselective": 1.4363, 
+   "flow": 1.47411, 
+   "label": "2142", 
+   "citations": 11.0, 
+   "mxsum": 1.47458, 
+   "mxaggregated": 1.31539, 
+   "x": 27.0
+  }, 
+  {
+   "descriptors": "9606143;9212019;9212021;9503005;9303050;9507166;9303160", 
+   "hindex": 12, 
+   "y": -29.012048721313477, 
+   "authors": "m. r. rahimi tabar,s. rouhani", 
+   "date": 728832, 
+   "id": 8790, 
+   "limitedToSubgraph": "9606143;9507166;9303050;9503005", 
+   "title": "A Logarithmic Conformal Field Theory Solution For Two Dimensional", 
+   "mxselective": 3.44741, 
+   "flow": 3.22996, 
+   "label": "9606143", 
+   "citations": 28.0, 
+   "mxsum": 3.80968, 
+   "mxaggregated": 5.34609, 
+   "x": 20.0
+  }, 
+  {
+   "descriptors": "9212010;9508040;9212145;9212015;9212019;9212021;9503005;9512022;9310056;9307091;9303050;9209046", 
+   "hindex": 3, 
+   "y": -49.73493957519531, 
+   "authors": "steven thomas,omduth coceal", 
+   "date": 728632, 
+   "id": 15062, 
+   "limitedToSubgraph": "9508040;9307091;9503005;9512022;9310056;9303050", 
+   "title": "Conformal Models of Magnetohydrodynamic Turbulence", 
+   "mxselective": 1.91216, 
+   "flow": 1.94928, 
+   "label": "9512022", 
+   "citations": 6.0, 
+   "mxsum": 2.3355, 
+   "mxaggregated": 3.31784, 
+   "x": 13.0
+  }, 
+  {
+   "descriptors": "9212015;9212021;9301030;9310056;9303050;9209046", 
+   "hindex": 4, 
+   "y": -61.13253402709961, 
+   "authors": "h. cateau,makoto umeki,yutaka matsuo", 
+   "date": 727847, 
+   "id": 1709, 
+   "limitedToSubgraph": "9310056;9303050", 
+   "title": "Predictions on Two-dimensional Turbulence by Conformal Field Theory", 
+   "mxselective": 1.34213, 
+   "flow": 1.51653, 
+   "label": "9310056", 
+   "citations": 4.0, 
+   "mxsum": 1.47585, 
+   "mxaggregated": 2.04294, 
+   "x": 12.0
+  }, 
+  {
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9301030;9307180;9307091;9209046;9303050", 
+   "hindex": 2, 
+   "y": -64.240966796875, 
+   "authors": "soonkeon nam,b. k. chung,h. j. shin,q-han park", 
+   "date": 727773, 
+   "id": 3095, 
+   "limitedToSubgraph": "9307180;9307091;9303050", 
+   "title": "Possible Tests of Conformal Turbulence through Boundaries", 
+   "mxselective": 1.21532, 
+   "flow": 1.23116, 
+   "label": "9307180", 
+   "citations": 2.0, 
+   "mxsum": 1.44569, 
+   "mxaggregated": 1.76216, 
+   "x": 9.0
+  }, 
+  {
+   "descriptors": "9212010;9508040;9212145;9212015;9212019;9212021;9307180;9307091;9303050;9310056", 
+   "hindex": 4, 
+   "y": -54.91566467285156, 
+   "authors": "l. moriconi", 
+   "date": 728514, 
+   "id": 12809, 
+   "limitedToSubgraph": "9508040;9310056;9307091;9303050;9307180", 
+   "title": "3-D Perturbations in Conformal Turbulence", 
+   "mxselective": 1.37526, 
+   "flow": 1.45225, 
+   "label": "9508040", 
+   "citations": 4.0, 
+   "mxsum": 1.64421, 
+   "mxaggregated": 2.31748, 
+   "x": 14.0
+  }, 
+  {
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9209046;9303050", 
+   "hindex": 6, 
+   "y": -50.771087646484375, 
+   "authors": "soonkeon nam,b. k. chung,h. j. shin,q-han park", 
+   "date": 727631, 
+   "id": 26891, 
+   "limitedToSubgraph": "9303050", 
+   "title": "Conformal Turbulence with Boundary", 
+   "mxselective": 3.37448, 
+   "flow": 4.18018, 
+   "label": "9303050", 
+   "citations": 10.0, 
+   "mxsum": 4.30644, 
+   "mxaggregated": 8.68975, 
+   "x": 16.0
+  }, 
+  {
+   "descriptors": "9212010;9507166;9212021;9503005;9301030;9303050;9212019;9501021;9505111", 
+   "hindex": 13, 
+   "y": -34.192771911621094, 
+   "authors": "m. r. rahimi tabar,s. rouhani", 
+   "date": 728503, 
+   "id": 12404, 
+   "limitedToSubgraph": "9507166;9303050;9503005", 
+   "title": "The Alf'ven Effect and Conformal Field Theory", 
+   "mxselective": 3.12301, 
+   "flow": 3.77077, 
+   "label": "9507166", 
+   "citations": 28.0, 
+   "mxsum": 2.8849, 
+   "mxaggregated": 4.10487, 
+   "x": 20.0
+  }, 
+  {
+   "descriptors": "9212010;9212019;9212021;9303050;9503005", 
+   "hindex": 12, 
+   "y": -33.1566276550293, 
+   "authors": "m. r. rahimitabar,s. rouhani", 
+   "date": 728353, 
+   "id": 11504, 
+   "limitedToSubgraph": "9303050;9503005", 
+   "title": "Turbulent Two Dimensional Magnetohydrodynamics and Conformal Field", 
+   "mxselective": 4.14465, 
+   "flow": 4.84903, 
+   "label": "9503005", 
+   "citations": 29.0, 
+   "mxsum": 3.3326, 
+   "mxaggregated": 5.17571, 
+   "x": 20.0
+  }
+ ], 
+ "links": [
+  {
+   "source": 1709, 
+   "limitedToSubgraph": "9303050", 
+   "id": 19600, 
+   "descriptors": "9303050;9212021;9209046;9212015", 
+   "target": 26891
+  }, 
+  {
+   "source": 10572, 
+   "limitedToSubgraph": "9303050", 
+   "id": 126339, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9303050", 
+   "target": 26891
+  }, 
+  {
+   "source": 121, 
+   "limitedToSubgraph": "9303050", 
+   "id": 335, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9209046;9303050", 
+   "target": 26891
+  }, 
+  {
+   "source": 10572, 
+   "limitedToSubgraph": "9307091;9303050", 
+   "id": 126342, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9307091;9303050", 
+   "target": 121
+  }, 
+  {
+   "source": 10572, 
+   "limitedToSubgraph": "9307180;9307091;9303050", 
+   "id": 126343, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9301030;9307180;9307091;9303050", 
+   "target": 3095
+  }, 
+  {
+   "source": 10572, 
+   "limitedToSubgraph": "9310056;9303050", 
+   "id": 126344, 
+   "descriptors": "9301030;9310056;9212021;9303050;9212015", 
+   "target": 1709
+  }, 
+  {
+   "source": 12809, 
+   "limitedToSubgraph": "9303050", 
+   "id": 149001, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9303050", 
+   "target": 26891
+  }, 
+  {
+   "source": 10572, 
+   "limitedToSubgraph": "9303050;9503005", 
+   "id": 126348, 
+   "descriptors": "9212010;9212019;9212021;9303050;9503005", 
+   "target": 11504
+  }, 
+  {
+   "source": 12809, 
+   "limitedToSubgraph": "9307091;9303050", 
+   "id": 149002, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9307091;9303050", 
+   "target": 121
+  }, 
+  {
+   "source": 11504, 
+   "limitedToSubgraph": "9303050", 
+   "id": 136360, 
+   "descriptors": "9212010;9212019;9212021;9303050", 
+   "target": 26891
+  }, 
+  {
+   "source": 12809, 
+   "limitedToSubgraph": "9307180;9307091;9303050", 
+   "id": 149003, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9307180;9307091;9303050", 
+   "target": 3095
+  }, 
+  {
+   "source": 12809, 
+   "limitedToSubgraph": "9310056;9303050", 
+   "id": 149004, 
+   "descriptors": "9310056;9212021;9303050;9212015", 
+   "target": 1709
+  }, 
+  {
+   "source": 3095, 
+   "limitedToSubgraph": "9303050", 
+   "id": 36298, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9209046;9303050", 
+   "target": 26891
+  }, 
+  {
+   "source": 10572, 
+   "limitedToSubgraph": "9507166;9303050;9503005", 
+   "id": 126351, 
+   "descriptors": "9212010;9212019;9212021;9503005;9301030;9303050;9507166;9501021;9505111", 
+   "target": 12404
+  }, 
+  {
+   "source": 3095, 
+   "limitedToSubgraph": "9307091;9303050", 
+   "id": 36299, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9307091;9209046;9303050", 
+   "target": 121
+  }, 
+  {
+   "source": 10572, 
+   "limitedToSubgraph": "9307091;9310056;9307180;9303050;9508040", 
+   "id": 126352, 
+   "descriptors": "9212010;9508040;9212145;9212015;9212019;9212021;9307180;9307091;9303050;9310056", 
+   "target": 12809
+  }, 
+  {
+   "source": 10572, 
+   "limitedToSubgraph": "9508040;9307091;9503005;9512022;9310056;9303050", 
+   "id": 126354, 
+   "descriptors": "9212010;9508040;9212145;9212015;9212019;9212021;9503005;9512022;9310056;9307091;9303050", 
+   "target": 15062
+  }, 
+  {
+   "source": 10572, 
+   "limitedToSubgraph": "9606143;9507166;9303050;9503005", 
+   "id": 126358, 
+   "descriptors": "9606143;9507166;9212021;9503005;9303050;9212019", 
+   "target": 8790
+  }, 
+  {
+   "source": 12404, 
+   "limitedToSubgraph": "9303050", 
+   "id": 142726, 
+   "descriptors": "9212010;9212019;9212021;9303050", 
+   "target": 26891
+  }, 
+  {
+   "source": 12404, 
+   "limitedToSubgraph": "9303050;9503005", 
+   "id": 142728, 
+   "descriptors": "9212010;9212019;9212021;9303050;9503005", 
+   "target": 11504
+  }, 
+  {
+   "source": 15062, 
+   "limitedToSubgraph": "9303050", 
+   "id": 183151, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9209046;9303050", 
+   "target": 26891
+  }, 
+  {
+   "source": 15062, 
+   "limitedToSubgraph": "9307091;9303050", 
+   "id": 183152, 
+   "descriptors": "9212010;9212145;9212015;9212019;9212021;9307091;9209046;9303050", 
+   "target": 121
+  }, 
+  {
+   "source": 8790, 
+   "limitedToSubgraph": "9303050", 
+   "id": 100480, 
+   "descriptors": "9212019;9212021;9303050", 
+   "target": 26891
+  }, 
+  {
+   "source": 15062, 
+   "limitedToSubgraph": "9310056;9303050", 
+   "id": 183153, 
+   "descriptors": "9310056;9212015;9212021;9303050;9209046", 
+   "target": 1709
+  }, 
+  {
+   "source": 760, 
+   "limitedToSubgraph": "9303050", 
+   "id": 8032, 
+   "descriptors": "9303050", 
+   "target": 26891
+  }, 
+  {
+   "source": 15062, 
+   "limitedToSubgraph": "9303050;9503005", 
+   "id": 183154, 
+   "descriptors": "9212010;9212019;9212021;9303050;9503005", 
+   "target": 11504
+  }, 
+  {
+   "source": 8790, 
+   "limitedToSubgraph": "9303050;9503005", 
+   "id": 100482, 
+   "descriptors": "9212019;9212021;9303050;9503005", 
+   "target": 11504
+  }, 
+  {
+   "source": 15062, 
+   "limitedToSubgraph": "9508040;9310056;9307091;9303050", 
+   "id": 183155, 
+   "descriptors": "9212010;9508040;9212145;9212015;9212019;9212021;9310056;9307091;9303050", 
+   "target": 12809
+  }, 
+  {
+   "source": 8790, 
+   "limitedToSubgraph": "9507166;9303050;9503005", 
+   "id": 100483, 
+   "descriptors": "9507166;9212019;9212021;9503005;9303050", 
+   "target": 12404
+  }, 
+  {
+   "source": 760, 
+   "limitedToSubgraph": "9606143;9303050", 
+   "id": 8035, 
+   "descriptors": "9606143;9303050;9303160", 
+   "target": 8790
+  }
+ ]
+}
